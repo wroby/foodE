@@ -9,6 +9,7 @@ def scaling_mobilnet_v2(images, labels):
     This fonction will scale the input pixels between -1 and 1
     '''
     preprocessing_data =  tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
+    print('⭐️ Scaling_mobilnet_v2')
     return preprocessing_data
 
 def preprocessing(fonction, train, validation, test):
@@ -19,6 +20,8 @@ def preprocessing(fonction, train, validation, test):
     train = train.map(fonction, num_parallel_calls=tf.data.AUTOTUNE)
     validation = validation.map(fonction, num_parallel_calls=tf.data.AUTOTUNE)
     test = test.map(fonction, num_parallel_calls=tf.data.AUTOTUNE)
+
+    print('⭐️ Preprocessing')
     return train, validation, test
 
 
@@ -32,4 +35,5 @@ def preprocess_cache(train, val, test):
     val = val.cache().prefetch(buffer_size=AUTOTUNE)
     test = test.cache().prefetch(buffer_size=AUTOTUNE)
 
+    print('⭐️ Process_cache')
     return train, val, test
