@@ -8,9 +8,8 @@ def scaling_mobilnet_v2(images, labels):
     '''
     This fonction will scale the input pixels between -1 and 1
     '''
-    preprocessing_data =  tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
     print('⭐️ Scaling_mobilnet_v2')
-    return preprocessing_data
+    return tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
 
 def preprocessing(fonction, train, validation, test):
     '''
