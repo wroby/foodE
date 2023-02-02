@@ -21,18 +21,12 @@ def preprocessing(fonction, train, validation, test):
     test = test.map(fonction, num_parallel_calls=tf.data.AUTOTUNE)
 
     print('⭐️ Preprocessing')
-    return train, validation, test
-
-
-def preprocess_cache(train, val, test):
-    '''
-    Cache the preprocessed data in memory and prefetch the next batch
-    Cette fonction est-elle utilisée ?
-    '''
+    
     AUTOTUNE = tf.data.AUTOTUNE
     train = train.cache().prefetch(buffer_size=AUTOTUNE)
     val = val.cache().prefetch(buffer_size=AUTOTUNE)
     test = test.cache().prefetch(buffer_size=AUTOTUNE)
-
+    
     print('⭐️ Process_cache')
-    return train, val, test
+
+    return train, validation, test
