@@ -1,4 +1,7 @@
+import os
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+from tensorflow.keras.applications.inception_v3 import InceptionV3
+from tensorflow.keras.applications.resnet_rs import ResNetRS200
 from tensorflow.keras import regularizers, layers, Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
@@ -6,16 +9,40 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 
 
-
-def initialize_model(img_height:int=256,img_width:int=256,trainable:bool=False,regularizer:bool=True):
+def initialize_model(img_height:int=256,\
+                    img_width:int=256,trainable:bool=False,regularizer:bool=False):
     """ Initialize CNN model"""
-    base_model = MobileNetV2(
-    input_shape=(img_height, img_width, 3),
-    include_top=False,
-    weights='imagenet',
-    pooling='avg')
+    model_choice = os.getenv("MODEL")
 
-    base_model.trainable = trainable
+    #Setting the model based on the choice
+    if model_choice == "MobilnetV2":
+        base_model = MobileNetV2(include_top = False,
+                                 input_shape = (img_height, img_width, 3),
+                                 weights = "imagenet",
+                                 pooling = "avg")
+
+    elif model_choice == "InceptionV3":
+        base_model = InceptionV3(include_top=False,
+                                 weights="imagenet",
+                                 input_shape=(img_height, img_width, 3),
+                                 pooling="avg")
+
+    elif model_choice == "ResNetRs200":
+        base_model = ResNetRS200(include_top = False,
+                                 weights = "imagenet",
+                                 include_preprocessing = False,
+                                 input_shape = (img_height, img_width, 3))
+
+    elif model_choice == "Local":
+        #Define our own model
+        pass
+
+    else:
+        print("\u274c No model found, model must be : [MobilnetV2, InceptionV3, ResNetRs200, Local]")
+        return None
+
+    if model_choice != "Local":
+        base_model.trainable = trainable
 
     #Adding regularizer if condition met
     if regularizer: regu=regularizers.l2(0.005)
@@ -29,15 +56,18 @@ def initialize_model(img_height:int=256,img_width:int=256,trainable:bool=False,r
     layers.RandomContrast(factor=0.2, seed=42),
     ## Base model
     base_model,
+    #Adding flatten layer needed for ResNetRs200
+    layers.Flatten(),
     ## FNN
     layers.Dense(128,activation='relu'),
-    layers.Dropout(0.3),
+    layers.Dropout(0.5),
     layers.Dense(101,kernel_regularizer=regu,activation='softmax')
     ])
 
     # Build model
     model.build(input_shape=(None, img_height, img_width, 3))
 
+    print(f"\u2705 Model {model_choice} initialize")
     return model
 
 
@@ -48,6 +78,7 @@ def compiler(model,learning_rate:float=1e-3,metrics:list=["accuracy"]):
         loss='categorical_crossentropy',
         metrics=metrics)
 
+    print(f"\u2705 Model compiled with learning rate : {learning_rate}")
     return model
 
 
@@ -57,6 +88,9 @@ def fitting(model,train,validation,patience:int=3):
                     patience=patience,
                     mode="min",
                     restore_best_weights=True)
+
+    #Adding tensorboard to log the training and visiualize performance for each model?
+
     #Start fit
     history = model.fit(
                 train,
