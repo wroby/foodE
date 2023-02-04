@@ -8,4 +8,5 @@ raw_data/
 .envrc
 .python-version
 notebooks/
-.envrc
+.env
+policy.yaml
