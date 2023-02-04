@@ -27,8 +27,3 @@ def get_local_data(path, path_test):
                                         seed=42, shuffle=True, batch_size=32)
 
     return train, validation, test
-
-
-
-
-t
