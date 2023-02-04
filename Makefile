@@ -1,6 +1,13 @@
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
+
+
+run_get_data:
+	python -c 'from data/get_gcp_data import get_gcp_data; get_gcp_data()'
+
+
+
 install_requirements:
 	@pip install -r requirements.txt
 
