@@ -11,7 +11,7 @@ from tensorflow.keras.optimizers import Adam
 
 def initialize_model(img_height:int=256,\
                     img_width:int=256,trainable:bool=True,regularizer:bool=False):
-                    
+
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
 
@@ -57,6 +57,7 @@ def initialize_model(img_height:int=256,\
     # layers.RandomRotation(factor=0.05, seed=42),
     # layers.RandomContrast(factor=0.2, seed=42),
 
+
     ## Base model
     base_model,
     #Adding flatten layer needed for ResNetRs200
@@ -85,7 +86,6 @@ def compiler(model,learning_rate:float=1e-3,metrics:list=["accuracy"]):
     return model
 
 
-
 def fitting(model=None,train=None,validation=None,patience:int=3):
 
     #Early stopping
@@ -95,7 +95,6 @@ def fitting(model=None,train=None,validation=None,patience:int=3):
                     restore_best_weights=True)
 
     #Adding tensorboard to log the training and visiualize performance for each model?
-
 
     path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(path_log)
