@@ -11,10 +11,7 @@ from tensorflow.keras.optimizers import Adam
 
 def initialize_model(img_height:int=256,\
                     img_width:int=256,trainable:bool=True,regularizer:bool=False):
-<<<<<<< HEAD
-=======
-                    
->>>>>>> 79d0a470d01dbc83419dae77fb9d7937da16f4a3
+
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
 
@@ -55,17 +52,12 @@ def initialize_model(img_height:int=256,\
     # Adding Augmentation layer & Top layer
     model = Sequential([
     ## Data Augmentation layer
-<<<<<<< HEAD
-    # layers.RandomFlip(mode="horizontal", seed=42),
-    # layers.RandomRotation(factor=0.05, seed=42),
-    # layers.RandomContrast(factor=0.2, seed=42),
-=======
 
     # layers.RandomFlip(mode="horizontal", seed=42),
     # layers.RandomRotation(factor=0.05, seed=42),
     # layers.RandomContrast(factor=0.2, seed=42),
 
->>>>>>> 79d0a470d01dbc83419dae77fb9d7937da16f4a3
+
     ## Base model
     base_model,
     #Adding flatten layer needed for ResNetRs200
@@ -94,13 +86,8 @@ def compiler(model,learning_rate:float=1e-3,metrics:list=["accuracy"]):
     return model
 
 
-<<<<<<< HEAD
-def fitting(model=None,train=None,validation=None,patience:int=3):
-=======
-
 def fitting(model=None,train=None,validation=None,patience:int=3):
 
->>>>>>> 79d0a470d01dbc83419dae77fb9d7937da16f4a3
     #Early stopping
     es = EarlyStopping(monitor="val_loss",
                     patience=patience,
@@ -109,20 +96,13 @@ def fitting(model=None,train=None,validation=None,patience:int=3):
 
     #Adding tensorboard to log the training and visiualize performance for each model?
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 79d0a470d01dbc83419dae77fb9d7937da16f4a3
     path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print(path_log)
     if not os.path.exists(os.path.join(path_log,"tmp")):
         os.mkdir(os.path.join(path_log,"tmp"))
         os.mkdir(os.path.join(path_log,"tmp","logs"))
     tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp","logs"))
-<<<<<<< HEAD
-=======
 
->>>>>>> 79d0a470d01dbc83419dae77fb9d7937da16f4a3
     #Start fit
     history = model.fit(
                 train,
