@@ -4,7 +4,7 @@
 
 
 run_get_data:
-	python -c 'from get_gcp_data import get_gcp_data; get_gcp_data()'
+	python -c 'from data/get_gcp_data import get_gcp_data; get_gcp_data()'
 
 
 
