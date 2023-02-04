@@ -2,6 +2,8 @@ import os
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet_rs import ResNetRS200
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.applications.efficientnet import EfficientNetB2
 from tensorflow.keras import regularizers, layers, Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
@@ -34,15 +36,29 @@ def initialize_model(img_height:int=256,\
                                  include_preprocessing = False,
                                  input_shape = (img_height, img_width, 3))
 
-    elif model_choice == "Local":
+
+    elif model_choice == "VGG16":
+        base_model = VGG16(include_top = False,
+                           weights = "imagenet",
+                           include_preprocessing = False,
+                           input_shape = (img_height, img_width, 3))
+
+    elif model_choice == "EfficientNetB2":
+        base_model = EfficientNetB2(include_top = False,
+                                    weights = "imagenet",
+                                    include_preprocessing = False,
+                                    input_shape = (img_height, img_width, 3))
+
+    elif model_choice == "Custom":
         #Define our own model
         pass
 
     else:
-        print("\u274c No model found, model must be : [MobilnetV2, InceptionV3, ResNetRs200, Local]")
+        print("\u274c No model found, model must be : [MobilnetV2, InceptionV3,\
+            ResNetRs200, VGG16, EfficientNetB2, Custom]")
         return None
 
-    if model_choice != "Local":
+    if model_choice != "Custom":
         base_model.trainable = trainable
 
     #Adding regularizer if condition met
@@ -86,7 +102,7 @@ def compiler(model,learning_rate:float=1e-3,metrics:list=["accuracy"]):
     return model
 
 
-def fitting(model=None,train=None,validation=None,patience:int=3):
+def fitting(model=None,train=None,validation=None,patience:int=10):
 
     #Early stopping
     es = EarlyStopping(monitor="val_loss",
@@ -97,7 +113,6 @@ def fitting(model=None,train=None,validation=None,patience:int=3):
     #Adding tensorboard to log the training and visiualize performance for each model?
 
     path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(path_log)
     if not os.path.exists(os.path.join(path_log,"tmp")):
         os.mkdir(os.path.join(path_log,"tmp"))
         os.mkdir(os.path.join(path_log,"tmp","logs"))
@@ -115,6 +130,6 @@ def fitting(model=None,train=None,validation=None,patience:int=3):
 
     return model, history
 
-def evaluate(model,test):
+def eval(model,test):
     results = model.evaluate(test, verbose=1)
     print(f"Test Accuracy: {results[1] * 100:.2f}%")
