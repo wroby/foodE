@@ -1,0 +1,15 @@
+bindings:
+- members:
+  - user:louis.rouby1@gmail.com
+  role: roles/owner
+- members:
+  - user:twrobel77@gmail.com
+  - user:graziani.gothe.leo@gmail.com
+  - user:kosta.baboun@gmail.com
+  - serviceAccount:batch-1004@integral-accord-374014.iam.gserviceaccount.com
+  - serviceAccount:grz-529@wagoncab-375310.iam.gserviceaccount.com
+  - serviceAccount:service-account-name@flawless-sorter-374014.iam.gserviceaccount.com
+  - serviceAccount:wagon-236@handy-vortex-374014.iam.gserviceaccount.com
+  role: roles/editor
+etag: BwXzlVxUpYQ=
+version: 1
