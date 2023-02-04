@@ -9,16 +9,19 @@ def get_gcp_data():
     filename = os.environ.get('FILENAME')
 
     source = "gs://" + bucket_name + "/" + filename
-    
+
     if os.environ.get("DESTINATION") == "local":
-        destination = "../code/wroby/foodE/raw_data/food-101"
+        file_path = os.path.abspath(__file__)
+        grandparent_folder = os.path.dirname(os.path.dirname(os.path.dirname(file_path)))
+        destination = os.path.join(grandparent_folder, "raw_data/")
+        
     elif os.environ.get("DESTINATION") == "cloud":
         os.mkdir("/FoodE/raw_data")
-        destination = "./FoodE/raw_data"
+        destination = "./FoodE/raw_data/"
+        
     else: print("No source selected")
 
-
     # Use gsutil cp with the -r (range) flag to download a portion of the file
-    result = subprocess.run(["gsutil", "cp", "-r","-m",  source, destination], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+    result = subprocess.run(["gsutil" ,"-m","cp", "-r",  source, destination])
+    
     return result
