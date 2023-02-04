@@ -5,12 +5,13 @@ from tensorflow.keras.applications.resnet_rs import ResNetRS200
 from tensorflow.keras import regularizers, layers, Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 
 
 def initialize_model(img_height:int=256,\
-                    img_width:int=256,trainable:bool=False,regularizer:bool=False):
+                    img_width:int=256,trainable:bool=True,regularizer:bool=False):
+                    
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
 
@@ -51,9 +52,11 @@ def initialize_model(img_height:int=256,\
     # Adding Augmentation layer & Top layer
     model = Sequential([
     ## Data Augmentation layer
-    layers.RandomFlip(mode="horizontal", seed=42),
-    layers.RandomRotation(factor=0.05, seed=42),
-    layers.RandomContrast(factor=0.2, seed=42),
+
+    # layers.RandomFlip(mode="horizontal", seed=42),
+    # layers.RandomRotation(factor=0.05, seed=42),
+    # layers.RandomContrast(factor=0.2, seed=42),
+
     ## Base model
     base_model,
     #Adding flatten layer needed for ResNetRs200
@@ -82,7 +85,9 @@ def compiler(model,learning_rate:float=1e-3,metrics:list=["accuracy"]):
     return model
 
 
-def fitting(model,train,validation,patience:int=3):
+
+def fitting(model=None,train=None,validation=None,patience:int=3):
+
     #Early stopping
     es = EarlyStopping(monitor="val_loss",
                     patience=patience,
@@ -90,6 +95,14 @@ def fitting(model,train,validation,patience:int=3):
                     restore_best_weights=True)
 
     #Adding tensorboard to log the training and visiualize performance for each model?
+
+
+    path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(path_log)
+    if not os.path.exists(os.path.join(path_log,"tmp")):
+        os.mkdir(os.path.join(path_log,"tmp"))
+        os.mkdir(os.path.join(path_log,"tmp","logs"))
+    tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp","logs"))
 
     #Start fit
     history = model.fit(
@@ -99,7 +112,7 @@ def fitting(model,train,validation,patience:int=3):
                 validation_data=validation,
                 shuffle=True,
                 batch_size=32,
-                callbacks=[es])
+                callbacks=[es, tensorboard_callback])
 
     return model, history
 
