@@ -6,9 +6,9 @@ from foodE.local_data import get_local_data
 from foodE.preprocessor import preprocessing
 from foodE.model import initialize_model, compiler, fitting, eval
 
-def get_data():
-    train, validation, test = get_local_data
-    return train, validation, test
+# def get_data():
+#     train, validation, test = get_local_data()
+#     return train, validation, test
 
 # def preprocess(train, validation, test):
 #     return preprocessing(train,validation,test)
@@ -17,6 +17,7 @@ print(f"\n✅ Data processed entirely")
 
 
 def training():
+    train,validation,test = get_local_data()
     train, validation, test = preprocessing(train,validation, test)
     print(f"\n✅ Data processed entirely")
     model = initialize_model()
