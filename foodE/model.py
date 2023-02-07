@@ -9,12 +9,12 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import L1L2
 import os
 
 
 def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
-                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
+                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),\
+                    reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
 
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
@@ -64,7 +64,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model.trainable = trainable
 
     #Adding regularizer if condition met
-    regu = tensorflow.keras.regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+    regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
 
     # Adding Augmentation layer & Top layer
     model = Sequential([
@@ -103,7 +103,7 @@ def compiler(model,learning_rate:float=float(os.environ.get('LEARNING_RATE')),me
     return model
 
 
-def fitting(model=None,train=None,validation=None,patience:int=os.environ.get('PATIENCE'), epochs:int=os.environ.get('EPOCH'), batch_size:int=os.environ.get('EPOCH')):
+def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.get('PATIENCE')), epochs:int=int(os.environ.get('EPOCH')), batch_size:int=int(os.environ.get('BATCH_SIZE'))):
 
     #Early stopping
     es = EarlyStopping(monitor="val_loss",

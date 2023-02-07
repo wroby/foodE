@@ -14,17 +14,15 @@ from foodE.registery import save_model
 # def preprocess(train, validation, test):
 #     return preprocessing(train,validation,test)
 
-print(f"\n✅ Data processed entirely")
-
-
 def training():
     train,validation,test = get_local_data()
+    print(f"\n✅ Local Data OK")
     train, validation, test = preprocessing(train,validation, test)
     print(f"\n✅ Data processed entirely")
     model = initialize_model()
-    print("initialized model")
+    print(f"\n✅ initialized model")
     model = compiler(model)
-    print("compiled model")
+    print(f"\n✅ compiled model")
     model,history = fitting(model, train=train , validation = validation )
 
     #Get lowest val_accuracy
@@ -39,6 +37,7 @@ def training():
     regularizerl1 = os.getenv("REGULARIZER_L1"),
     regularizerl2 = os.getenv("REGULARIZER_L2"),
     patience=os.getenv("PATIENCE "),
+    trainanble=os.getenv("TRAINABLE"),
     context="train")
 
     save_model(model = model, params = params, metrics = val_acc)
