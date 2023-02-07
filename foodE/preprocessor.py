@@ -9,15 +9,15 @@ def scaling_model(images, labels):
     This fonction will scale the input pixels between -1 and 1
     '''
     print('⭐️ Scaling_mobilnet_v2')
-    if os.environ("MODEL") == "MobilnetV2":
+    if os.getenv("MODEL") == "MobilnetV2":
         return tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
-    elif os.environ("MODEL") == "InceptionV3":
+    elif os.getenv("MODEL") == "InceptionV3":
         return tf.keras.applications.inception_v3.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
-    elif os.environ("MODEL") == "ResNetRs200":
+    elif os.getenv("MODEL") == "ResNetRs200":
         return tf.keras.applications.resnet_rs.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
-    elif os.environ("MODEL") == "VGG16":
+    elif os.getenv("MODEL") == "VGG16":
         return tf.keras.applications.vgg16.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
-    elif os.environ("MODEL") == "EfficientnetB2":
+    elif os.getenv("MODEL") == "EfficientnetB2":
         return tf.keras.applications.efficientnet.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
     else:
         return tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
