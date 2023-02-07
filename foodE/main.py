@@ -33,18 +33,19 @@ def training():
     #Params to load to mlflow
     params = dict(
     # Model parameters
-    learning_rate=os.getenv("learning_rate"),
-    batch_size=os.getenv("batch_size"),
-    patience=os.getenv("patience"),
+    learning_rate=os.getenv("LEARNING_RATE"),
+    batch_size=os.getenv("BATCH_SIZE "),
+    epochs = os.getenv("EPOCH"),
+    regularizerl1 = os.getenv("REGULARIZER_L1"),
+    regularizerl2 = os.getenv("REGULARIZER_L2"),
+    patience=os.getenv("PATIENCE "),
     context="train")
 
     save_model(model = model, params = params, metrics = val_acc)
 
-
-
-    eval(model,test)
-    results = model.evaluate(test, verbose=1)
-    print(f"Test Accuracy: {results[1] * 100:.2f}%")
+    # eval(model,test)
+    # results = model.evaluate(test, verbose=1)
+    # print(f"Test Accuracy: {results[1] * 100:.2f}%")
     return None
 
 

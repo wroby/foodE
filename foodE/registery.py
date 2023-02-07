@@ -17,8 +17,8 @@ def save_model(model: keras.Model = None,
     if os.getenv("MODEL_TARGET") == "mlflow":
 
         # retrieve mlflow env params
-        track = os.environ.get("MLFLOW_TRACKING_URI")
-        experiment = os.environ.get("MLFLOW_EXPERIMENT")
+        track = os.getenv("MLFLOW_TRACKING_URI")
+        experiment = os.getenv("MLFLOW_EXPERIMENT")
 
         # configure mlflow
         mlflow.set_tracking_uri(track)
