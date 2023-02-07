@@ -21,7 +21,7 @@ def training():
     train,validation,test = get_local_data()
     train, validation, test = preprocessing(train,validation, test)
     print(f"\n✅ Data processed entirely")
-    model = initialize_model(img_height=64,img_width=64)
+    model = initialize_model()
     print("initialized model")
     model = compiler(model)
     print("compiled model")
