@@ -26,10 +26,11 @@ def training():
     model,history = fitting(model, train=train , validation = validation)
 
     #Get best val_accuracy
-    best_val_acc = max(history.history["val_accuracy"]),
-    best_epoch = history.history["val_accuracy"].index(best_val_acc),
-    best_val_loss = history.history["val_loss"][best_epoch],
-    best_loss = history.history["loss"][best_epoch],
+    best_val_acc = max(history.history["val_accuracy"])
+    print(best_val_acc)
+    best_epoch = history.history["val_accuracy"].index(best_val_acc)
+    best_val_loss = history.history["val_loss"][best_epoch]
+    best_loss = history.history["loss"][best_epoch]
     best_acc = history.history["accuracy"][best_epoch]
 
     metrics = dict(
