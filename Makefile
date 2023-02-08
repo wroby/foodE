@@ -6,7 +6,8 @@
 run_get_data:
 	python -c 'from foodE.data.get_gcp_data import get_gcp_data; get_gcp_data()'
 
-
+training:
+	python -c 'from foodE.main import training; training()'
 
 install_requirements:
 	@pip install -r requirements.txt
