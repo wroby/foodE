@@ -23,16 +23,29 @@ def training():
     print(f"\n✅ initialized model")
     model = compiler(model)
     print(f"\n✅ compiled model")
-    model,history = fitting(model, train=train , validation = validation )
+    model,history = fitting(model, train=train , validation = validation)
 
-    #Get lowest val_accuracy
-    val_acc = np.min(history.history['val_accuracy'])
+    #Get best val_accuracy
+    best_val_acc = max(history.history["val_accuracy"])
+    print(best_val_acc)
+    best_epoch = history.history["val_accuracy"].index(best_val_acc)
+    best_val_loss = history.history["val_loss"][best_epoch]
+    best_loss = history.history["loss"][best_epoch]
+    best_acc = history.history["accuracy"][best_epoch]
+
+    metrics = dict(
+    val_acc = best_val_acc,
+    val_loss = best_val_loss,
+    acc = best_acc,
+    loss = best_loss,
+    epoch = best_epoch,
+    )
 
     #Params to load to mlflow
     params = dict(
     # Model parameters
     learning_rate=os.getenv("LEARNING_RATE"),
-    batch_size=os.getenv("BATCH_SIZE "),
+    batch_size=os.getenv("BATCH_SIZE"),
     epochs = os.getenv("EPOCH"),
     regularizerl1 = os.getenv("REGULARIZER_L1"),
     regularizerl2 = os.getenv("REGULARIZER_L2"),
@@ -40,7 +53,7 @@ def training():
     trainanble=os.getenv("TRAINABLE"),
     context="train")
 
-    save_model(model = model, params = params, metrics = val_acc)
+    save_model(model = model, params = params, metrics = metrics)
 
     # eval(model,test)
     # results = model.evaluate(test, verbose=1)
