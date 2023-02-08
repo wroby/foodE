@@ -37,7 +37,7 @@ def training():
     val_loss = best_val_loss,
     acc = best_acc,
     loss = best_loss,
-    best_epoch = best_epoch,
+    epoch = best_epoch,
     )
 
     #Params to load to mlflow
