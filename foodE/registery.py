@@ -1,10 +1,13 @@
 import mlflow
 from mlflow.tracking import MlflowClient
-
+import tensorflow as tf
 import os
 
-
+import mlflow
+import mlflow.keras
+import tensorflow as tf
 from tensorflow import keras
+
 
 
 def save_model(model: keras.Model = None,
@@ -13,6 +16,10 @@ def save_model(model: keras.Model = None,
     """
     persist trained model, params and metrics
     """
+    import mlflow
+    import mlflow.keras
+    import tensorflow as tf
+    from tensorflow import keras
 
     if os.getenv("MODEL_TARGET") == "mlflow":
 
@@ -34,9 +41,9 @@ def save_model(model: keras.Model = None,
 
             # STEP 3: push model to mlflow
             if model:
-                mlflow.keras.log_model(keras_model=model,
+                mlflow.keras.log_model(model=model,
                             artifact_path="model",
-                            keras_module="tensorflow.keras",
-                            registered_model_name="foodE_model")
+                            #keras_module="tensorflow.keras",
+                            registered_model_name=str(os.getenv("MODEL")))
 
         return None
