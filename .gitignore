@@ -10,3 +10,4 @@ raw_data/
 notebooks/
 .env
 policy.yaml
+tmp/

@@ -36,7 +36,7 @@ def preprocessing(train, validation, test):
 
     AUTOTUNE = tf.data.AUTOTUNE
     train = train.cache().prefetch(buffer_size=AUTOTUNE)
-    val = val.cache().prefetch(buffer_size=AUTOTUNE)
+    validation = validation.cache().prefetch(buffer_size=AUTOTUNE)
     test = test.cache().prefetch(buffer_size=AUTOTUNE)
 
     print('⭐️ Process_cache')

@@ -9,12 +9,12 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import L1L2
 import os
 
 
 def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
-                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
+                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),\
+                    reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
 
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
@@ -63,17 +63,26 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     if model_choice != "Custom":
         base_model.trainable = trainable
 
+    if os.getenv('DATA_AUGMENTATION') == 'True':
+        augmentation_layer =Sequential([
+        layers.RandomFlip(mode="horizontal", seed=42),
+        layers.RandomRotation(factor=0.05, seed=42),
+        layers.RandomContrast(factor=0.2, seed=42)])
+        print(f"⭐️ Data augmentation layers : True")
+    else:
+        augmentation_layer = Sequential([
+            layers.Layer()
+        ])
+        print(f"⭐️ Data augmentation layers : False")
+
     #Adding regularizer if condition met
-    regu = tensorflow.keras.regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+    regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
 
     # Adding Augmentation layer & Top layer
     model = Sequential([
+
     ## Data Augmentation layer
-
-    # layers.RandomFlip(mode="horizontal", seed=42),
-    # layers.RandomRotation(factor=0.05, seed=42),
-    # layers.RandomContrast(factor=0.2, seed=42),
-
+    augmentation_layer,
 
     ## Base model
     base_model,
@@ -87,6 +96,10 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     # Build model
     model.build(input_shape=(None, img_height, img_width, 3))
+    print(f"⭐️ Model built with shape : {img_height} x {img_width}")
+    print(f"⭐️ Model built with trainable : {trainable}")
+    print(f"⭐️ Model built with l1 : {reg_l1}")
+    print(f"⭐️ Model built with l2 : {reg_l2}")
 
     print(f"\u2705 Model {model_choice} initialize")
     return model
@@ -99,17 +112,20 @@ def compiler(model,learning_rate:float=float(os.environ.get('LEARNING_RATE')),me
         loss='categorical_crossentropy',
         metrics=metrics)
 
-    print(f"\u2705 Model compiled with learning rate : {learning_rate}")
+    print(f"⭐️ Model compiled with learning rate : {learning_rate}")
+
     return model
 
 
-def fitting(model=None,train=None,validation=None,patience:int=os.environ.get('PATIENCE'), epochs:int=os.environ.get('EPOCH'), batch_size:int=os.environ.get('EPOCH')):
+def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.get('PATIENCE')), epochs:int=int(os.environ.get('EPOCH')), batch_size:int=int(os.environ.get('BATCH_SIZE'))):
 
     #Early stopping
     es = EarlyStopping(monitor="val_loss",
                     patience=patience,
                     mode="auto",
                     restore_best_weights=True)
+
+    print(f"⭐️ EarlyStopping with patience : {patience}")
 
     #Adding tensorboard to log the training and visiualize performance for each model?
 
@@ -118,6 +134,9 @@ def fitting(model=None,train=None,validation=None,patience:int=os.environ.get('P
         os.mkdir(os.path.join(path_log,"tmp"))
         os.mkdir(os.path.join(path_log,"tmp","logs"))
     tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp","logs"))
+
+    print(f"⭐️ Fitting with epochs : {epochs}")
+    print(f"⭐️ Fitting with batch size : {batch_size}")
 
     #Start fit
     history = model.fit(
@@ -128,6 +147,8 @@ def fitting(model=None,train=None,validation=None,patience:int=os.environ.get('P
                 shuffle=True,
                 batch_size=batch_size,
                 callbacks=[es, tensorboard_callback])
+
+    print(f"\u2705 Model fitting is DONE !")
 
     return model, history
 
