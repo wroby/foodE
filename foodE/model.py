@@ -2,7 +2,7 @@ import os
 import numpy as np
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
-from tensorflow.keras.applications.resnet_rs import ResNetRS200
+from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.applications.efficientnet_v2 import EfficientNetV2B2
 from tensorflow.keras import regularizers, layers, Sequential
@@ -33,10 +33,10 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
                                  input_shape=(img_height, img_width, 3),
                                  pooling="avg")
 
-    elif model_choice == "ResNetRs200":
-        base_model = ResNetRS200(include_top = False,
+    elif model_choice == "ResNet50":
+        base_model = ResNet50(include_top = False,
                                  weights = "imagenet",
-                                 include_preprocessing = False,
+                                 pooling = "avg",
                                  input_shape = (img_height, img_width, 3))
 
 
@@ -57,7 +57,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     else:
         print("\u274c No model found, model must be : [MobilnetV2, InceptionV3,\
-            ResNetRs200, VGG16, EfficientNetB2, Custom]")
+            ResNet50, VGG16, EfficientNetB2, Custom]")
         return None
 
     if model_choice != "Custom":
