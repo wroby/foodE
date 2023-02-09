@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import time
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet50 import ResNet50
@@ -132,8 +133,10 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
     path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if not os.path.exists(os.path.join(path_log,"tmp")):
         os.mkdir(os.path.join(path_log,"tmp"))
-        os.mkdir(os.path.join(path_log,"tmp","logs"))
-    tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp","logs"))
+    timestamp = time.strftime('%m-%d %H-%M', time.gmtime(time.time()))
+    logsdir = f"logs_{timestamp}_{os.getenv('MODEL')}"
+    os.mkdir(os.path.join(path_log,"tmp",logsdir))
+    tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp",logsdir))
 
     print(f"⭐️ Fitting with epochs : {epochs}")
     print(f"⭐️ Fitting with batch size : {batch_size}")
