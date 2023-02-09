@@ -10,6 +10,7 @@ from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, 
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 import os
+from foodE.custom_model import custom_model
 
 
 def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
@@ -53,7 +54,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     elif model_choice == "Custom":
         #Define our own model
-        pass
+        base_model = custom_model(img_height, img_width)
 
     else:
         print("\u274c No model found, model must be : [MobilnetV2, InceptionV3,\
