@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet_rs import ResNetRS200
@@ -42,7 +43,6 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     elif model_choice == "VGG16":
         base_model = VGG16(include_top = False,
                            weights = "imagenet",
-                           include_preprocessing = False,
                            input_shape = (img_height, img_width, 3))
 
     elif model_choice == "EfficientNetB2":
@@ -155,3 +155,13 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
 def eval(model,test):
     results = model.evaluate(test, verbose=1)
     print(f"Test Accuracy: {results[1] * 100:.2f}%")
+
+def predict(model, img):
+    #Checkez le type(img) pour le predict
+    path = os.getenv("PATH_DATA")
+    classes = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path,x))]
+    results = model.predict(img)
+    idx = np.argmax(results)
+    recipe = classes[idx]
+
+    return recipe
