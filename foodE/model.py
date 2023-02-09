@@ -3,7 +3,7 @@ from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet_rs import ResNetRS200
 from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.applications.efficientnet import EfficientNetB2
+from tensorflow.keras.applications.efficientnet_v2 import EfficientNetV2B2
 from tensorflow.keras import regularizers, layers, Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
@@ -46,7 +46,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
                            input_shape = (img_height, img_width, 3))
 
     elif model_choice == "EfficientNetB2":
-        base_model = EfficientNetB2(include_top = False,
+        base_model = EfficientNetV2B2(include_top = False,
                                     weights = "imagenet",
                                     include_preprocessing = False,
                                     input_shape = (img_height, img_width, 3))
