@@ -158,10 +158,12 @@ def eval(model,test):
 
 def predict(model, img):
     #Checkez le type(img) pour le predict
-    path = os.getenv("PATH_DATA")
+    path = "../raw_data/food-101/food-101-train/images"
     classes = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path,x))]
-    results = model.predict(img)
-    idx = np.argmax(results)
-    recipe = classes[idx]
+    print(classes)
+    print(len(classes))
+    # results = model.predict(img)
+    # idx = np.argmax(results)
+    # recipe = classes[idx]
 
-    return recipe
+    # return recipe
