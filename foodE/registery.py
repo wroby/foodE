@@ -1,4 +1,5 @@
 import mlflow
+import time
 from mlflow.tracking import MlflowClient
 import os
 
@@ -41,3 +42,17 @@ def save_model(model: keras.Model = None,
                             registered_model_name=str(os.getenv("MODEL")))
 
         return None
+
+    if os.getenv("MODEL_TARGET") == "local":
+        #save model localy
+        file_path = os.path.abspath(__file__)
+        LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
+        model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}")
+        model.save(model_path)
+
+
+def load_model():
+    pass
+
+file_path = os.path.abspath(__file__)
+LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
