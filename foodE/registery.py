@@ -4,7 +4,6 @@ from mlflow.tracking import MlflowClient
 import os
 
 import mlflow.keras
-import tensorflow as tf
 from tensorflow import keras
 
 
@@ -52,7 +51,14 @@ def save_model(model: keras.Model = None,
 
 
 def load_model():
-    pass
+     #Need to add load model from mlflow
 
-file_path = os.path.abspath(__file__)
-LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
+    #load model locally"
+    file_path = os.path.abspath(__file__)
+    LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
+    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}")
+    model = keras.models.load_model(model_path)
+
+    print("Loaded model from local Disk.")
+
+    return model
