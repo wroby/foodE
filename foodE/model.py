@@ -15,29 +15,29 @@ import os
 
 
 def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
-                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),\
+                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=os.environ.get('TRAINABLE'),\
                     reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
 
     """ Initialize CNN model"""
     model_choice = os.getenv("MODEL")
 
     #Setting the model based on the choice
-    if model_choice == "MobilnetV2":
+    if model_choice == "MobileNetV2":
         base_model = MobileNetV2(include_top = False,
                                  input_shape = (img_height, img_width, 3),
                                  weights = "imagenet",
-                                 pooling = "avg")
+                                 pooling = os.environ.get('POOL'))
 
     elif model_choice == "InceptionV3":
         base_model = InceptionV3(include_top=False,
                                  weights="imagenet",
                                  input_shape=(img_height, img_width, 3),
-                                 pooling="avg")
+                                 pooling= os.environ.get('POOL'))
 
     elif model_choice == "ResNet50":
         base_model = ResNet50(include_top = False,
                                  weights = "imagenet",
-                                 pooling = "avg",
+                                 pooling = os.environ.get('POOL'),
                                  input_shape = (img_height, img_width, 3))
 
 
@@ -50,6 +50,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model = EfficientNetV2B2(include_top = False,
                                     weights = "imagenet",
                                     include_preprocessing = False,
+                                    pooling=os.environ.get('POOL'),
                                     input_shape = (img_height, img_width, 3))
 
     elif model_choice == "Custom":
@@ -61,8 +62,10 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
             ResNet50, VGG16, EfficientNetB2, Custom]")
         return None
 
-    if model_choice != "Custom":
-        base_model.trainable = trainable
+    if trainable == "True":
+        base_model.trainable = True
+    else:
+        base_model.trainable = False
 
     if os.getenv('DATA_AUGMENTATION') == 'True':
         augmentation_layer =Sequential([
@@ -72,6 +75,17 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         print(f"⭐️ Data augmentation layers : True")
     else:
         augmentation_layer = Sequential([
+            layers.Layer()
+        ])
+        print(f"⭐️ Data augmentation layers : False")
+
+    if os.getenv('DROPOUT') == 'True':
+        dropout_layer = Sequential([
+            layers.Dropout(0.5)
+            ])
+        print(f"⭐️ Dropout layer: True")
+    else:
+        dropout_layer = Sequential([
             layers.Layer()
         ])
         print(f"⭐️ Data augmentation layers : False")
@@ -91,12 +105,14 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     layers.Flatten(),
     ## FNN
     layers.Dense(128,activation='relu'),
-    layers.Dropout(0.5),
+    layers.Dense(128,activation='relu'),
+    dropout_layer,
     layers.Dense(101,kernel_regularizer=regu,activation='softmax')
     ])
 
     # Build model
     model.build(input_shape=(None, img_height, img_width, 3))
+    print(f"⭐️ Model built with pool : {os.environ.get('POOL')}")
     print(f"⭐️ Model built with shape : {img_height} x {img_width}")
     print(f"⭐️ Model built with trainable : {trainable}")
     print(f"⭐️ Model built with l1 : {reg_l1}")
