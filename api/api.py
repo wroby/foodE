@@ -2,8 +2,7 @@ import os
 import requests
 
 #params
-recipe = os.environ.get('PREDICTION')
-#possible querys
+
 #API KEY
 key = os.environ.get('API_KEY')
 
