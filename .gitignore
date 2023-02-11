@@ -11,3 +11,4 @@ notebooks/
 .env
 policy.yaml
 tmp/
+foodE/models/

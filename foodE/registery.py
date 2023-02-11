@@ -1,6 +1,6 @@
 import mlflow
-import time
 from mlflow.tracking import MlflowClient
+import time
 import os
 
 import mlflow.keras
@@ -37,28 +37,28 @@ def save_model(model: keras.Model = None,
             if model:
                 mlflow.keras.log_model(model=model,
                             artifact_path="model",
-                            keras_module="tensorflow.keras",
+                            #keras_module="tensorflow.keras",
                             registered_model_name=str(os.getenv("MODEL")))
 
-        return None
 
-    if os.getenv("MODEL_TARGET") == "local":
-        #save model localy
-        file_path = os.path.abspath(__file__)
-        LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
-        model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}")
-        model.save(model_path)
-
-
-def load_model():
-     #Need to add load model from mlflow
-
-    #load model locally"
+    #save model localy
+    timestamp = time.time()
     file_path = os.path.abspath(__file__)
     LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
-    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}")
-    model = keras.models.load_model(model_path)
+    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{timestamp}")
+    print(model_path)
+    model.save(model_path)
 
+
+def load_model(timestamp):
+    #Need to add load model from mlflow
+
+    #load model locally"
+    time = timestamp
+    file_path = os.path.abspath(__file__)
+    LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
+    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{time}")
+    model = keras.models.load_model(model_path)
     print("Loaded model from local Disk.")
 
     return model
