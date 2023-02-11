@@ -34,11 +34,11 @@ def save_model(model: keras.Model = None,
             mlflow.log_metrics(metrics)
 
             # STEP 3: push model to mlflow
-            if model:
-                mlflow.keras.log_model(model=model,
-                            artifact_path="model",
-                            #keras_module="tensorflow.keras",
-                            registered_model_name=str(os.getenv("MODEL")))
+            # if model:
+            #     mlflow.keras.log_model(model=model,
+            #                 artifact_path="model",
+            #                 #keras_module="tensorflow.keras",
+            #                 registered_model_name=str(os.getenv("MODEL")))
 
 
     #save model localy
@@ -50,7 +50,7 @@ def save_model(model: keras.Model = None,
     model.save(model_path)
 
 
-def load_model(timestamp):
+def load_model(timestamp=os.getenv("TIMESTAMP_MODEL")):
     #Need to add load model from mlflow
 
     #load model locally"
