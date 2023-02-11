@@ -33,12 +33,19 @@ def training():
     best_loss = history.history["loss"][best_epoch]
     best_acc = history.history["accuracy"][best_epoch]
 
+    #Evaluate
+    eval(model,test)
+    results = model.evaluate(test, verbose=1)
+    test_accuracy = test_acc
+    print(f"Test Accuracy: {results[1] * 100:.2f}%")
+
     metrics = dict(
     val_acc = best_val_acc,
     val_loss = best_val_loss,
     acc = best_acc,
     loss = best_loss,
     epoch = best_epoch,
+    test_acc = test_accuracy
     )
 
     #Params to load to mlflow
@@ -55,9 +62,8 @@ def training():
 
     save_model(model = model, params = params, metrics = metrics)
 
-    # eval(model,test)
-    # results = model.evaluate(test, verbose=1)
-    # print(f"Test Accuracy: {results[1] * 100:.2f}%")
+
+
     return None
 
 
