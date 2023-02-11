@@ -1,5 +1,5 @@
-  # FROM python:3.10.6-buster
-  # COPY taxifare /taxifare
-  # COPY requirements.txt /requirements.txt
-  # RUN pip install -r requirements.txt
-  # CMD uvicorn taxifare.api.fast:app --host 0.0.0.0
+  FROM python:3.10.6-buster
+  COPY foodE /foodE
+  COPY requirements.txt /requirements.txt
+  RUN pip install -r requirements.txt
+  CMD uvicorn foodE.api.fast:app --host 0.0.0.0
