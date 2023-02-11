@@ -22,7 +22,7 @@ def training():
     #test2 : l2
     #test3 : l1l2
     #test4 : lr-e5
-    #test5 : lr-e6
+    #test5 : lr-e2
     #test6 : data-augmentation
     #test7 : max pool
     #test8 : No pool
@@ -34,7 +34,7 @@ def training():
     trainable = ["False","False","False","False","False","False","False","False","False","False","False", "False"]
     l1 = [0.0, 0.01, 0, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
     l2 = [0.0, 0, 0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
-    lr = [0.0001, 0.0001, 0.0001, 0.0001, 0.00001, 0.000001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001,0.0001]
+    lr = [0.0001, 0.0001, 0.0001, 0.0001, 0.00001, 0.01, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001,0.0001]
     augmentation =["False","False","False","False","False","False","True","False","False","False","False", "False"]
     pool=["avg","avg","avg","avg","avg","avg","avg","max","None","avg","avg"]
     dropout=["False","False","False","False","False","False","False","False","False","True","False", "False"]
