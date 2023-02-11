@@ -55,6 +55,20 @@ def training():
         os.environ['IMG_WIDTH'] = str(img_width)
         os.environ['PATIENCE'] = str(patience)
 
+        #Params
+        print("⭐️ Params ⭐️")
+        print(f"Trainable : {trainable}")
+        print(f"L1 : {l1}")
+        print(f"L2 : {l2}")
+        print(f"lr : {lr}")
+        print(f"Data Augmentation :{augmentation}")
+        print(f"Dropout : {dropout}")
+        print(f"Pooling : {pool}")
+        print(f"Height : {img_height}")
+        print(f"Width : {img_width}")
+        print(f"Patience : {patience}")
+        print("⭐️ Params ⭐️")
+
         #Run Model
         train,validation,test = get_local_data()
         print(f"\n✅ Local Data OK")
