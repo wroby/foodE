@@ -37,7 +37,7 @@ def save_model(model: keras.Model = None,
             if model:
                 mlflow.keras.log_model(model=model,
                             artifact_path="model",
-                            keras_module="tensorflow.keras",
+                            #keras_module="tensorflow.keras",
                             registered_model_name=str(os.getenv("MODEL")))
 
         return None
