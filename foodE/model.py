@@ -15,7 +15,7 @@ import os
 
 
 def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
-                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=bool(os.environ.get('TRAINABLE')),\
+                    img_width:int=int(os.environ.get('IMG_WIDTH')),trainable:bool=os.environ.get('TRAINABLE'),\
                     reg_l1 = float(os.environ.get('REGULARIZER_L1')), reg_l2 = float(os.environ.get('REGULARIZER_L2'))):
 
     """ Initialize CNN model"""
