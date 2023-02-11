@@ -8,7 +8,7 @@ def scaling_model(images, labels):
     '''
     This fonction will scale the input pixels between -1 and 1
     '''
-    print('⭐️ Scaling_mobilnet_v2')
+    print('⭐️ Scaling')
     if os.getenv("MODEL") == "MobilnetV2":
         return tf.keras.applications.mobilenet_v2.preprocess_input(tf.image.convert_image_dtype(images, tf.float32)), labels
     elif os.getenv("MODEL") == "InceptionV3":
