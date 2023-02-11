@@ -48,7 +48,6 @@ def training():
         os.environ['REGULARIZER_L1'] = str(l1)
         os.environ['REGULARIZER_L2'] = str(l2)
         os.environ['LEARNING_RATE'] = str(lr)
-        os.environ['LEARNING_RATE'] = str(lr)
         os.environ['DATA_AUGMENTATION'] = str(augmentation)
         os.environ['DROPOUT'] = str(dropout)
         os.environ['POOL'] = str(pool)
