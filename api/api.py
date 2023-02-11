@@ -21,8 +21,7 @@ def get_macronutrients(recipe):
         recipe = recipe.replace("hot_dog","hotdog")
     elif recipe == "prime_rib":
         recipe = recipe.replace("prime_rib","rib_prime")
-    else:
-        response = requests.get("https://api.spoonacular.com/recipes/guessNutrition?apiKey={key}&title={recipe}").json()
+    response = requests.get("https://api.spoonacular.com/recipes/guessNutrition?apiKey={key}&title={recipe}").json()
     if response.status_code == 200:
         return response
     else:
