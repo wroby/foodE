@@ -9,6 +9,9 @@ run_get_data:
 training:
 	python -c 'from foodE.main import training; training()'
 
+multitraining:
+	python -c 'from foodE.main_multi_params import training; training()'
+
 install_requirements:
 	@pip install -r requirements.txt
 
