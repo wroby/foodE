@@ -47,41 +47,7 @@ def save_model(model = None,
 
 
     #save model localy
-    # timestamp = time.time()
-    # file_path = os.path.abspath(__file__)
-    # LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
-    # model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{timestamp}")
     model.save(os.path.join(model_path,"model"))
-
-    # #Plot history
-    # fig ,axes = plt.subplots(1,2,figsize=(20,5))
-    # axes[0].plot(history.history['accuracy'])
-    # axes[0].plot(history.history['val_accuracy'])
-    # axes[0].set_title('model accuracy')
-    # axes[0].set_ylabel('accuracy')
-    # axes[0].set_xlabel('epoch')
-    # axes[0].legend(['train', 'test'], loc='upper left')
-
-    # axes[1].plot(history.history['loss'])
-    # axes[1].plot(history.history['val_loss'])
-    # axes[1].set_title('model loss')
-    # axes[1].set_ylabel('loss')
-    # axes[1].set_xlabel('epoch')
-    # axes[1].legend(['train', 'test'], loc='upper right')
-
-    # fig.savefig(os.path.join(model_path,"history"))
-
-    # #save confusion matrix
-    # fig = plt.figure()
-    # plt.matshow(cm, cmap=plt.cm.Blues)
-    # plt.title("Confusion matrix")
-    # plt.ylabel("True labels")
-    # plt.xlabel("Predict label")
-    # plt.savefig(os.path.join(model_path,"confusion_matrix"))
-
-    # #save report
-    # with open(os.path.join(model_path,"report"),"w") as file:
-    #     file.write(report)
 
 def save_confusion_matrix(model,test):
     global true_label, predict_label
