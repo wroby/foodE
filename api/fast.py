@@ -7,7 +7,7 @@ from tensorflow import keras
 
 app = FastAPI()
 
-app.state.model = model
+app.state.model = load_model()
 
 @app.get("/predict")
 
