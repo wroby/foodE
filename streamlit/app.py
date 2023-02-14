@@ -4,6 +4,7 @@ from streamlit_elements import elements, mui, html
 from streamlit_elements import media
 import streamlit_elements as elem
 import time
+import requests
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -27,6 +28,9 @@ if page == "Page 1":
         # Check the shape of img_tensor:
         # Should output shape: (height, width, channels)
         st.write(img_tensor.shape)
+
+        response = requests.get(f"http://127.0.0.1:8000/predict?img={img_tensor}").json()
+        st.json(response)
 
 if page == "Page 2":
     st.title("Tracker")
