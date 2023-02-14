@@ -6,7 +6,10 @@ from tensorflow import keras
 
 app = FastAPI()
 
-app.state.model = model_load()
+#app.state.model = "/Users/roubylouis/code/wroby/foodE/foodE/models/Custom_1676401626.8029408/model"
+
+app.state.model = model_load
+
 
 @app.get("/predict")
 
@@ -16,4 +19,4 @@ def prediction(img):
     pred = model.predict(img) #img = image tensor
     idx = np.argmax(pred)
     recipe = classes[idx]
-    return recipe 
+    return recipe
