@@ -23,7 +23,7 @@ def training():
     print(f"\n✅ initialized model")
     model = compiler(model)
     print(f"\n✅ compiled model")
-    model,history = fitting(model, train=train , validation = validation)
+    model,history = fitting(model, train=test , validation = validation)
 
     #Get best val_accuracy
     best_val_acc = max(history.history["val_accuracy"])
@@ -34,10 +34,7 @@ def training():
     best_acc = history.history["accuracy"][best_epoch]
 
     #Evaluate
-    eval(model,test)
-    results = model.evaluate(test, verbose=1)
-    test_accuracy = results[1]
-    print(f"Test Accuracy: {results[1] * 100:.2f}%")
+    test_accuracy = eval(model,test)
 
     metrics = dict(
     val_acc = best_val_acc,

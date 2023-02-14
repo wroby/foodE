@@ -177,6 +177,7 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
 def eval(model,test):
     results = model.evaluate(test, verbose=1)
     print(f"Test Accuracy: {results[1] * 100:.2f}%")
+    return results[1]
 
 def predict(model, img):
     #Checkez le type(img) pour le predict

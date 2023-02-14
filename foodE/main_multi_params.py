@@ -5,7 +5,7 @@ import os
 from foodE.local_data import get_local_data
 from foodE.preprocessor import preprocessing
 from foodE.model import initialize_model, compiler, fitting, eval
-from foodE.registery import save_model
+from foodE.registery import save_model, save_classification_report, save_confusion_matrix, save_plot
 
 # def get_data():
 #     train, validation, test = get_local_data()
@@ -89,10 +89,7 @@ def training():
         best_acc = history.history["accuracy"][best_epoch]
 
         #Evaluate
-        eval(model,test)
-        results = model.evaluate(test, verbose=1)
-        test_accuracy = test_acc
-        print(f"Test Accuracy: {results[1] * 100:.2f}%")
+        test_accuracy = eval(model,test)
 
         metrics = dict(
         val_acc = best_val_acc,
@@ -116,6 +113,10 @@ def training():
         context="train")
 
         save_model(model = model, params = params, metrics = metrics)
+        save_plot(history)
+        save_confusion_matrix(model,test)
+        save_classification_report()
+
 
         # eval(model,test)
         # results = model.evaluate(test, verbose=1)
