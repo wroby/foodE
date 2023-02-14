@@ -5,7 +5,7 @@ import os
 from foodE.local_data import get_local_data
 from foodE.preprocessor import preprocessing
 from foodE.model import initialize_model, compiler, fitting, eval
-from foodE.registery import save_model
+from foodE.registery import save_model, save_classification_report, save_confusion_matrix, save_plot
 
 # def get_data():
 #     train, validation, test = get_local_data()
@@ -55,6 +55,20 @@ def training():
         os.environ['IMG_WIDTH'] = str(img_width)
         os.environ['PATIENCE'] = str(patience)
 
+        #Params
+        print("⭐️ Params ⭐️")
+        print(f"Trainable : {trainable}")
+        print(f"L1 : {l1}")
+        print(f"L2 : {l2}")
+        print(f"lr : {lr}")
+        print(f"Data Augmentation :{augmentation}")
+        print(f"Dropout : {dropout}")
+        print(f"Pooling : {pool}")
+        print(f"Height : {img_height}")
+        print(f"Width : {img_width}")
+        print(f"Patience : {patience}")
+        print("⭐️ Params ⭐️")
+
         #Run Model
         train,validation,test = get_local_data()
         print(f"\n✅ Local Data OK")
@@ -64,7 +78,7 @@ def training():
         print(f"\n✅ initialized model")
         model = compiler(model)
         print(f"\n✅ compiled model")
-        model,history = fitting(model, train=test , validation = validation)
+        model,history = fitting(model, train=train, validation = validation)
 
         #Get best val_accuracy
         best_val_acc = max(history.history["val_accuracy"])
@@ -74,12 +88,16 @@ def training():
         best_loss = history.history["loss"][best_epoch]
         best_acc = history.history["accuracy"][best_epoch]
 
+        #Evaluate
+        test_accuracy = eval(model,test)
+
         metrics = dict(
         val_acc = best_val_acc,
         val_loss = best_val_loss,
         acc = best_acc,
         loss = best_loss,
         epoch = best_epoch,
+        test_acc = test_accuracy
         )
 
         #Params to load to mlflow
@@ -95,6 +113,10 @@ def training():
         context="train")
 
         save_model(model = model, params = params, metrics = metrics)
+        save_plot(history)
+        save_confusion_matrix(model,test)
+        save_classification_report()
+
 
         # eval(model,test)
         # results = model.evaluate(test, verbose=1)

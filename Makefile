@@ -6,6 +6,9 @@
 run_get_data:
 	python -c 'from foodE.data.get_gcp_data import get_gcp_data; get_gcp_data()'
 
+run_api:
+	uvicorn foodE.api.fast:app --reload
+
 training:
 	python -c 'from foodE.main import training; training()'
 

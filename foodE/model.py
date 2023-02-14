@@ -71,8 +71,9 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     if os.getenv('DATA_AUGMENTATION') == 'True':
         augmentation_layer =Sequential([
         layers.RandomFlip(mode="horizontal", seed=42),
-        layers.RandomRotation(factor=0.05, seed=42),
-        layers.RandomContrast(factor=0.2, seed=42)])
+        layers.RandomFlip(mode="vertical", seed=42),
+        layers.RandomRotation(factor=0.2, seed=42),
+        layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)])
         print(f"⭐️ Data augmentation layers : True")
     else:
         augmentation_layer = Sequential([
@@ -176,6 +177,7 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
 def eval(model,test):
     results = model.evaluate(test, verbose=1)
     print(f"Test Accuracy: {results[1] * 100:.2f}%")
+    return results[1]
 
 def predict(model, img):
     #Checkez le type(img) pour le predict
