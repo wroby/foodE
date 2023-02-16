@@ -5,6 +5,10 @@ from streamlit_elements import media
 import streamlit_elements as elem
 import time
 import requests
+from foodE.registery import model_load
+from foodE.model import pred
+import numpy as np
+from PIL import Image
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -16,21 +20,31 @@ if page == "Page 1":
 
     img_file_buffer = st.camera_input("Take a picture")
 
-    if img_file_buffer is not None:
-        # To read image file buffer as a 3D uint8 tensor with TensorFlow:
-        bytes_data = img_file_buffer.getvalue()
-        img_tensor = tf.io.decode_image(bytes_data, channels=3)
 
-        # Check the type of img_tensor:
-        # Should output: <class 'tensorflow.python.framework.ops.EagerTensor'>
-        st.write(type(img_tensor))
+    img = Image.open(img_file_buffer)
+    img = img.resize((96,96))
+    st.write(type(img))
+    img_array = np.array(img)
 
-        # Check the shape of img_tensor:
-        # Should output shape: (height, width, channels)
-        st.write(img_tensor.shape)
+    st.write(img_array.shape)
 
-        response = requests.get(f"http://127.0.0.1:8000/predict?img={img_tensor}").json()
-        st.json(response)
+    # Check the type of img_tensor:
+    # Should output: <class 'tensorflow.python.framework.ops.EagerTensor'>
+
+    # st.write(type(img_array))
+    img_array = np.expand_dims(img_array,axis=0)
+
+    # Check the shape of img_tensor:
+    # Should output shape: (height, width, channels)
+
+    #img_bytes = img_file_buffer.getvalue()
+    # st.write(type(img_bytes))
+    st.write(img_array.shape)
+    # model = model_load()
+    # #recette = pred(model,img_array)
+    # img_array = img_array.tolist()
+    response = requests.post("http://localhost:8000/predict", params={"img":img_array}).json()
+    st.write(response)
 
 if page == "Page 2":
     st.title("Tracker")
