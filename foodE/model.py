@@ -122,6 +122,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     print(f"⭐️ Model built with l2 : {reg_l2}")
 
     print(f"\u2705 Model {model_choice} initialize")
+    print(model.get_config()['layers'][-1])
     return model
 
 
@@ -133,7 +134,7 @@ def compiler(model,learning_rate:float=float(os.environ.get('LEARNING_RATE')),me
         metrics=metrics)
 
     print(f"⭐️ Model compiled with learning rate : {learning_rate}")
-
+    print(model.optimizer.get_config())
     return model
 
 
@@ -179,9 +180,9 @@ def eval(model,test):
     print(f"Test Accuracy: {results[1] * 100:.2f}%")
     return results[1]
 
-def predict(model, img):
+def pred(model, img):
     #Checkez le type(img) pour le predict
-    path = "../raw_data/food-101/food-101-train/images"
+    path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"raw_data/food-101/food-101-test/images")
     classes = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path,x))]
     results = model.predict(img)
     idx = np.argmax(results)

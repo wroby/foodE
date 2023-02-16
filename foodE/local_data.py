@@ -4,9 +4,8 @@ from tensorflow.keras.utils import image_dataset_from_directory
 
 
 
-def get_local_data():
-    img_height = int(os.environ.get("IMG_HEIGHT"))
-    img_width = int(os.environ.get("IMG_WIDTH"))
+def get_local_data(img_height = int(os.environ.get("IMG_HEIGHT")),img_width = int(os.environ.get("IMG_WIDTH"))):
+
     file_path = os.path.abspath(__file__)
     parent_folder = os.path.dirname(os.path.dirname(file_path))
     path_train = os.path.join(parent_folder, "raw_data/food-101/food-101-train/images")
