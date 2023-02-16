@@ -46,6 +46,9 @@ def training():
     for trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience in\
             zip(trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience):
 
+        os.environ['DATA_AUGMENTATION'] = str(augmentation)
+        os.environ['DROPOUT'] = str(dropout)
+        os.environ['POOL'] = str(pool)
 
         #Params
         print("⭐️ Params ⭐️")
@@ -70,7 +73,9 @@ def training():
         print(f"\n✅ initialized model")
         model = compiler(model,learning_rate=lr)
         print(f"\n✅ compiled model")
-        model,history = fitting(model, train=test, validation = validation,patience=patience)
+        print(model.summary())
+        print(model.get_config()["layers"][2]["config"]["layers"][-1])
+        model,history = fitting(model, train=train, validation = validation,patience=patience)
 
         #Get best val_accuracy
         best_val_acc = max(history.history["val_accuracy"])
