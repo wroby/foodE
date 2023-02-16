@@ -106,6 +106,8 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     #Adding flatten layer needed for ResNetRs200
     layers.Flatten(),
     ## FNN
+    layers.Dense(256,activation='relu'),
+    dropout_layer,
     layers.Dense(128,activation='relu'),
     dropout_layer,
     layers.Dense(101,kernel_regularizer=regu,activation='softmax')
