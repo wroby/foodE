@@ -73,8 +73,6 @@ def training():
         print(f"\n✅ initialized model")
         model = compiler(model,learning_rate=lr)
         print(f"\n✅ compiled model")
-        print(model.summary())
-        print(model.get_config()["layers"][2]["config"]["layers"][-1])
         model,history = fitting(model, train=train, validation = validation,patience=patience)
 
         #Get best val_accuracy
