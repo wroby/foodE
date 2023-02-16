@@ -23,7 +23,7 @@ def training():
     print(f"\n✅ initialized model")
     model = compiler(model)
     print(f"\n✅ compiled model")
-    model,history = fitting(model, train=test , validation = validation)
+    model,history = fitting(model, train=train , validation = validation)
 
     #Get best val_accuracy
     best_val_acc = max(history.history["val_accuracy"])
