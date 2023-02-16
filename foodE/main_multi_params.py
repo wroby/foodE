@@ -38,22 +38,14 @@ def training():
     augmentation =["False","False","False","False","False","False","True","False","False","False","False", "False"]
     pool=["avg","avg","avg","avg","avg","avg","avg","max","None","avg","avg"]
     dropout=["False","False","False","False","False","False","False","False","False","True","False", "False"]
-    img_height = ['96','96','96','96','96','96','96','96','96','96','224',"96"]
-    img_width = ['96','96','96','96','96','96','96','96','96','96','224',"96"]
-    patience = ['10','10','10','10','10','10','10','10','10','10','10',"20"]
+    img_height = [96,96,96,96,96,96,96,96,96,96,224,96]
+    img_width = [96,96,96,96,96,96,96,96,96,96,224,96]
+    patience = [10,10,10,10,10,10,10,10,10,10,10,20]
 
 
-    for trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience in zip(trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience):
-        os.environ['TRAINABLE'] = str(trainable)
-        os.environ['REGULARIZER_L1'] = str(l1)
-        os.environ['REGULARIZER_L2'] = str(l2)
-        os.environ['LEARNING_RATE'] = str(lr)
-        os.environ['DATA_AUGMENTATION'] = str(augmentation)
-        os.environ['DROPOUT'] = str(dropout)
-        os.environ['POOL'] = str(pool)
-        os.environ['IMG_HEIGHT'] = str(img_height)
-        os.environ['IMG_WIDTH'] = str(img_width)
-        os.environ['PATIENCE'] = str(patience)
+    for trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience in\
+            zip(trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience):
+
 
         #Params
         print("⭐️ Params ⭐️")
@@ -70,15 +62,15 @@ def training():
         print("⭐️ Params ⭐️")
 
         #Run Model
-        train,validation,test = get_local_data()
+        train,validation,test = get_local_data(img_height=img_height,img_width=img_width)
         print(f"\n✅ Local Data OK")
         train, validation, test = preprocessing(train,validation, test)
         print(f"\n✅ Data processed entirely")
-        model = initialize_model()
+        model = initialize_model(img_height=img_height,img_width=img_width,trainable=trainable,reg_l1=l1,reg_l2=l2)
         print(f"\n✅ initialized model")
-        model = compiler(model)
+        model = compiler(model,learning_rate=lr)
         print(f"\n✅ compiled model")
-        model,history = fitting(model, train=train, validation = validation)
+        model,history = fitting(model, train=test, validation = validation,patience=patience)
 
         #Get best val_accuracy
         best_val_acc = max(history.history["val_accuracy"])
