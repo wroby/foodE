@@ -8,10 +8,6 @@ import mlflow.keras
 from sklearn.metrics import confusion_matrix, classification_report
 from tensorflow.keras.models import load_model
 
-timestamp = time.time()
-file_path = os.path.abspath(__file__)
-LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
-model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{timestamp}")
 
 def save_model(model = None,
                params: dict = None,
@@ -19,6 +15,11 @@ def save_model(model = None,
     """
     persist trained model, params and metrics
     """
+    global model_path
+    timestamp = time.time()
+    file_path = os.path.abspath(__file__)
+    LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
+    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{timestamp}")
 
     if os.getenv("MODEL_TARGET") == "mlflow":
 
@@ -50,6 +51,7 @@ def save_model(model = None,
     model.save(os.path.join(model_path,"model"))
 
 def save_confusion_matrix(model,test):
+    """Save confusion matrix, on the same folder as the model"""
     global true_label, predict_label
     true_label = []
     predict_label = []
@@ -71,6 +73,7 @@ def save_confusion_matrix(model,test):
     plt.savefig(os.path.join(model_path,"confusion_matrix"))
 
 def save_plot(history):
+    """Save history plot, on the same folder as the model"""
     fig ,axes = plt.subplots(1,2,figsize=(20,5))
 
     #Accuracy plot
@@ -92,6 +95,7 @@ def save_plot(history):
     fig.savefig(os.path.join(model_path,"history"))
 
 def save_classification_report():
+    """Save classification report, on the same folder as the model"""
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)),"raw_data/food-101/food-101-test/images")
     report = classification_report(true_label,predict_label,\
             target_names= [x for x in os.listdir(path) if os.path.isdir(os.path.join(path,x))])
