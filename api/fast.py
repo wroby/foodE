@@ -1,31 +1,39 @@
 from fastapi import FastAPI
 from foodE.registery import model_load
 from foodE.model import pred
-from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
-import cv2
-import io
-from PIL import Image
+from typing import List
+from pydantic import BaseModel
+from starlette.responses import Response
 
+# Create a new instance of the FastAPI application
 app = FastAPI()
 
+# Load the machine learning model and save it in the state of the application
 app.state.model = model_load()
 
-@app.post("/predict")
+# Define a data model for the request body
+class Img(BaseModel):
+    img: List
 
-def receive_image(img): #: UploadFile=File(...)):
+# Define an HTTP endpoint that expects an HTTP POST request
+# with a JSON payload containing a list of images
+@app.post("/predict/")
+async def receive_image(img: Img):
+    # Get the list of images from the request body
+    img_list = list(img)[0][1]
 
-    ### Receiving and decoding the image
-    #contents = await img.read()
-    #contents = Image.open(contents)
-    #contents = contents.resize((96,96))
-    # nparr = np.fromstring(contents, np.uint8)
-    #cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # type(cv2_img) => numpy.ndarray
-    #Check input type``
-    #cv2_img = img.resize((96,96))
-    #cv2_img
+    # Convert the list of images to a numpy array
+    img_array = np.array(img_list)
 
+    # Add an extra dimension to the numpy array to create a tensor
+    img_expand = np.expand_dims(img_array, axis=0)
+
+    # Get the machine learning model from the application state
     model = app.state.model
-    prediction = pred(model,img) #img = image tensor
-    print(prediction)
+
+    # Make a prediction using the machine learning model and the image tensor
+    predi = pred(model, img_expand) #img = image tensor
+
+    # Return a plain text response containing the prediction
+    return Response(content=predi, media_type="text/plain")
