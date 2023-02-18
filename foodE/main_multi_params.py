@@ -17,30 +17,26 @@ from foodE.registery import save_model, save_classification_report, save_confusi
 def training():
 
     # Modify the environment variables and re-run the script for each subsequent model
-    #test0 : trainable
-    #test1 : l1
-    #test2 : l2
-    #test3 : l1l2
+    #test1 : data augmentation
+    #test2 : dropout last layer
+    #test3 : max pool
     #test4 : lr-e5
-    #test5 : lr-e2
-    #test6 : data-augmentation
-    #test7 : max pool
-    #test8 : No pool
-    #test9 : dropout
-    #test10 : imageSize-224
-    #test11 : patience-20
-    #test12 : AdamW?
+    #test5 : image size 224
+    #test6 : l1
+    #test7 : l2
+    #test8 : l1l2
 
-    trainable = ["False","False","False","False","False","False","False","False","False","False","False", "False"]
-    l1 = [0.0, 0.01, 0, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
-    l2 = [0.0, 0, 0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
-    lr = [0.0001, 0.0001, 0.0001, 0.0001, 0.00001, 0.01, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001,0.0001]
-    augmentation =["False","False","False","False","False","False","True","False","False","False","False", "False"]
-    pool=["avg","avg","avg","avg","avg","avg","avg","max","None","avg","avg"]
-    dropout=["False","False","False","False","False","False","False","False","False","True","False", "False"]
-    img_height = [96,96,96,96,96,96,96,96,96,96,224,96]
-    img_width = [96,96,96,96,96,96,96,96,96,96,224,96]
-    patience = [10,10,10,10,10,10,10,10,10,10,10,20]
+
+    l1 = [0,0,0,0,0,0.01,0,0.01]
+    l2 = [0,0,0,0,0,0,0.01,0.01]
+    lr = [0.0001,0.0001]
+    augmentation = ["True","False","False","False","False","False","False","False"]
+    pool= ["avg","avg","max","avg","avg","avg","avg","avg"]
+    dropout=["False","True","False","False","False","False","False","False"]
+    img_height = [96,96,96,96,224,96,96,96]
+    img_width = [96,96,96,96,224,96,96,96]
+
+
 
 
     for trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience in\
