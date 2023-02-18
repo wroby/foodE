@@ -7,15 +7,83 @@ import time
 import requests
 from foodE.registery import model_load
 from foodE.model import pred
+from foodE.streamlit_outils import new_ID
+from foodE.streamlit_outils import exist_ID
+from foodE.streamlit_outils import ID_update_height
+from foodE.streamlit_outils import ID_update_weigth
+from foodE.streamlit_outils import ID_update_weigth_height
 import numpy as np
 from PIL import Image
 import os
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Page 1", "Page 2", "Page 3"])
+page = st.sidebar.radio("Go to", ["Personal information",  "Page 1", "Page 2", "Page 3"])
 
 # Use the page variable to determine which page to display
+if page == "Personal information":
+    st.title("Personal information")
+
+    with st.form(key='my_data'):
+
+        t1, _, _ = st.columns(3)
+        with t1 :
+            user_ID = st.number_input(label='Enter your User ID please : ', value = 1)
+
+
+        c1, c2 = st.columns(2)
+        with c1:
+            height_check = st.checkbox("Change heigth")
+            height = st.slider(label='Enter your height (cm) please : ', min_value=0, max_value=220)
+        with c2:
+            weigth_check = st.checkbox("Change weigth")
+            weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
+
+        submit_button = st.form_submit_button(label='Submit')
+
+        if not height_check:
+            height = None
+
+        if not weigth_check:
+            weigth = None
+
+        # tester le fonctionnement de value
+        test = f'Heigth : {height}, weigth = {weigth}, user = {user_ID}'
+        st.write(test)
+
+        # Verifier si l'ID Exist
+        exist_id = exist_ID(user_ID)[0]['f0_']
+        st.write(f"Le ID {user_ID} est dans la base : {exist_id}")
+
+        test = f'exist = {exist_id}, height = {height}, weigth = {weigth}'
+        st.write(test)
+
+        # si exist modifier soit H soit W
+        if exist_id and height != None and weigth == None:
+            out_ID_update_height = ID_update_height(user_ID,height)
+
+        if exist_id and height == None and weigth != None:
+            out_ID_update_weigth = ID_update_weigth(user_ID,weigth)
+
+        if exist_id and height != None and weigth != None:
+            out_ID_update_weigth_height = ID_update_weigth_height(user_ID,weigth,height)
+
+        # S'il n'existe pas: Nous avons besoin de l'ensemble de données
+        if not exist_id and height != None and weigth!= None:
+            out_new_id = new_ID(user_ID,height, weigth)
+
+
+
+
+# Enregistrer données dans la table ID_heigth_weigth
+# 1 creer fichier secrets.toml
+# 2 ajouter dans .gitignore
+# 3 ajouter secrets dans streamlit
+# cf : https://docs.streamlit.io/knowledge-base/tutorials/databases/bigquery
+# Si problemes de syncro : sudo hwclock -s
+# Attention, dossier .streamlit (le deplacer ?)
+
+
 if page == "Page 1":
     st.title("Camera")
     img_file_buffer = st.camera_input("Take a picture")
