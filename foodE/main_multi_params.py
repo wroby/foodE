@@ -17,51 +17,42 @@ from foodE.registery import save_model, save_classification_report, save_confusi
 def training():
 
     # Modify the environment variables and re-run the script for each subsequent model
-    #test0 : trainable
-    #test1 : l1
-    #test2 : l2
-    #test3 : l1l2
-    #test4 : lr-e5
-    #test5 : lr-e2
-    #test6 : data-augmentation
-    #test7 : max pool
-    #test8 : No pool
-    #test9 : dropout
-    #test10 : imageSize-224
-    #test11 : patience-20
-    #test12 : AdamW?
-
-    trainable = ["False","False","False","False","False","False","False","False","False","False","False", "False"]
-    l1 = [0.0, 0.01, 0, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
-    l2 = [0.0, 0, 0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0]
-    lr = [0.0001, 0.0001, 0.0001, 0.0001, 0.00001, 0.01, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001,0.0001]
-    augmentation =["False","False","False","False","False","False","True","False","False","False","False", "False"]
-    pool=["avg","avg","avg","avg","avg","avg","avg","max","None","avg","avg"]
-    dropout=["False","False","False","False","False","False","False","False","False","True","False", "False"]
-    img_height = [96,96,96,96,96,96,96,96,96,96,224,96]
-    img_width = [96,96,96,96,96,96,96,96,96,96,224,96]
-    patience = [10,10,10,10,10,10,10,10,10,10,10,20]
+    #test1 : data augmentation
+    #test2 : dropout last layer
+    #test4 : lr-e-5
+    #test5 : lr-e-3
+    #test5 : image size 224
+    #test6 : l1
+    #test7 : l2
+    #test8 : l1l2
 
 
-    for trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience in\
-            zip(trainable, l1, l2, lr, augmentation, pool, dropout, img_height, img_width, patience):
+    l1 = [0,0,0,0,0,0.05,0,0.05]
+    l2 = [0,0,0,0,0,0,0.05,0.05]
+    lr = [0.0001,0.0001,0.0001,0.00001,0.001,0.0001,0.0001,0.0001]
+    augmentation = ["True","False","False","False","False","False","False","False"]
+    dropout=["False","True","False","False","False","False","False","False"]
+    img_height = [96,96,96,96,224,96,96,96]
+    img_width = [96,96,96,96,224,96,96,96]
+
+
+
+
+    for l1, l2, lr, augmentation, dropout, img_height, img_width in\
+            zip(l1, l2, lr, augmentation, dropout, img_height, img_width):
 
         os.environ['DATA_AUGMENTATION'] = str(augmentation)
         os.environ['DROPOUT'] = str(dropout)
-        os.environ['POOL'] = str(pool)
 
         #Params
         print("⭐️ Params ⭐️")
-        print(f"Trainable : {trainable}")
         print(f"L1 : {l1}")
         print(f"L2 : {l2}")
         print(f"lr : {lr}")
         print(f"Data Augmentation :{augmentation}")
         print(f"Dropout : {dropout}")
-        print(f"Pooling : {pool}")
         print(f"Height : {img_height}")
         print(f"Width : {img_width}")
-        print(f"Patience : {patience}")
         print("⭐️ Params ⭐️")
 
         #Run Model
@@ -69,11 +60,11 @@ def training():
         print(f"\n✅ Local Data OK")
         train, validation, test = preprocessing(train,validation, test)
         print(f"\n✅ Data processed entirely")
-        model = initialize_model(img_height=img_height,img_width=img_width,trainable=trainable,reg_l1=l1,reg_l2=l2)
+        model = initialize_model(img_height=img_height,img_width=img_width,reg_l1=l1,reg_l2=l2)
         print(f"\n✅ initialized model")
         model = compiler(model,learning_rate=lr)
         print(f"\n✅ compiled model")
-        model,history = fitting(model, train=train, validation = validation,patience=patience)
+        model,history = fitting(model, train=train, validation = validation)
 
         #Get best val_accuracy
         best_val_acc = max(history.history["val_accuracy"])
