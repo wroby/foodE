@@ -9,6 +9,7 @@ from foodE.registery import model_load
 from foodE.model import pred
 import numpy as np
 from PIL import Image
+import os
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -17,34 +18,37 @@ page = st.sidebar.radio("Go to", ["Page 1", "Page 2", "Page 3"])
 # Use the page variable to determine which page to display
 if page == "Page 1":
     st.title("Camera")
-
     img_file_buffer = st.camera_input("Take a picture")
 
+    with st.spinner("Wait for it..."):
+        time.sleep(2.5)
+        if img_file_buffer:
+            # Change image to the correct size
+            img = Image.open(img_file_buffer)
+            img_height = int(os.environ.get('IMG_HEIGHT'))
+            img_width = int(os.environ.get('IMG_WIDTH'))
+        # st.write(img_width)
+            img = img.resize((img_height,img_width))
+            #st.write(type(img))
 
-    img = Image.open(img_file_buffer)
-    img = img.resize((96,96))
-    st.write(type(img))
-    img_array = np.array(img)
+            # Transform img to np.array
+            img_array = np.array(img)
+            #st.write(img_array.shape)
 
-    st.write(img_array.shape)
+            # Make a json with a list
+            jayson = {"img": img_array.tolist() }
 
-    # Check the type of img_tensor:
-    # Should output: <class 'tensorflow.python.framework.ops.EagerTensor'>
+            # Post request to API
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post("http://localhost:8000/predict", headers = headers, json=jayson)
 
-    # st.write(type(img_array))
-    img_array = np.expand_dims(img_array,axis=0)
+            if response.status_code == 200:
+                st.balloons()
+                st.write(response.content)
+            else:
+                st.markdown("**Oops**, something went wrong 😓 Please try again.")
+                print(response.status_code, response.content)
 
-    # Check the shape of img_tensor:
-    # Should output shape: (height, width, channels)
-
-    #img_bytes = img_file_buffer.getvalue()
-    # st.write(type(img_bytes))
-    st.write(img_array.shape)
-    # model = model_load()
-    # #recette = pred(model,img_array)
-    # img_array = img_array.tolist()
-    response = requests.post("http://localhost:8000/predict", params={"img":img_array}).json()
-    st.write(response)
 
 if page == "Page 2":
     st.title("Tracker")

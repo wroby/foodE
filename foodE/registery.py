@@ -13,7 +13,7 @@ file_path = os.path.abspath(__file__)
 LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
 model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{timestamp}")
 
-def save_model(model = None,
+def save_model(
                params: dict = None,
                metrics: dict = None,) -> None:
     """
@@ -47,7 +47,7 @@ def save_model(model = None,
 
 
     #save model localy
-    model.save(os.path.join(model_path,"model"))
+    #model.save(os.path.join(model_path,"model"))
 
 def save_confusion_matrix(model,test):
     global true_label, predict_label
