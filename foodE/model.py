@@ -80,8 +80,6 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     x = base_model(x)
     x = layers.Flatten()(x)
     x = layers.Dense(256, activation = "relu")(x)
-    if os.getenv('DROPOUT') == 'True':
-        x = layers.Dropout(0.5)(x)
     x = layers.Dense(128, activation = "relu")(x)
     if os.getenv('DROPOUT') == 'True':
         x = layers.Dropout(0.5)(x)
