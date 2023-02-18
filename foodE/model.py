@@ -6,7 +6,7 @@ from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.applications.efficientnet_v2 import EfficientNetV2B2
-from tensorflow.keras import regularizers, layers, Sequential
+from tensorflow.keras import regularizers, layers, Sequential, Input, Model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
@@ -68,53 +68,29 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         base_model.trainable = False
 
-    if os.getenv('DATA_AUGMENTATION') == 'True':
-        augmentation_layer =Sequential([
-        layers.RandomFlip(mode="horizontal", seed=42),
-        layers.RandomFlip(mode="vertical", seed=42),
-        layers.RandomRotation(factor=0.2, seed=42),
-        layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)])
-        print(f"⭐️ Data augmentation layers : True")
-    else:
-        augmentation_layer = Sequential([
-            layers.Layer()
-        ])
-        print(f"⭐️ Data augmentation layers : False")
-
-    if os.getenv('DROPOUT') == 'True':
-        dropout_layer = Sequential([
-            layers.Dropout(0.5)
-            ])
-        print(f"⭐️ Dropout layer: True")
-    else:
-        dropout_layer = Sequential([
-            layers.Layer()
-        ])
-        print(f"⭐️ Data augmentation layers : False")
-
-    #Adding regularizer if condition met
     regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+    #Model Functionial
+    inputs = Input(shape=(img_height,img_width,3))
+    x = layers.Normalization()(inputs)
+    if os.getenv('DATA_AUGMENTATION') == 'True':
+        x = layers.RandomFlip(mode="horizontal", seed=42)(x)
+        x = layers.RandomFlip(mode="vertical", seed=42)(x)
+        x = layers.RandomRotation(factor=0.2, seed=42)(x)
+        x = layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)(x)
+    x = base_model(x)
+    x = layers.Flatten()(x)
+    x = layers.Dense(256, activation = "relu")(x)
+    if os.getenv('DROPOUT') == 'True':
+        x = layers.Dropout(0.5)(x)
+    x = layers.Dense(128, activation = "relu")(x)
+    if os.getenv('DROPOUT') == 'True':
+        x = layers.Dropout(0.5)(x)
+    outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
 
-    # Adding Augmentation layer & Top layer
-    model = Sequential([
+    model = Model(inputs = inputs, outputs= outputs)
 
-    ## Data Augmentation layer
-    augmentation_layer,
-
-    ## Base model
-    base_model,
-    #Adding flatten layer needed for ResNetRs200
-    layers.Flatten(),
-    ## FNN
-    layers.Dense(256,activation='relu'),
-    dropout_layer,
-    layers.Dense(128,activation='relu'),
-    dropout_layer,
-    layers.Dense(101,kernel_regularizer=regu,activation='softmax')
-    ])
-
-    # Build model
-    model.build(input_shape=(None, img_height, img_width, 3))
+    print(f"⭐️ Model built with Data augmentation : {os.environ.get('DATA_AUGMENTATION')}")
+    print(f"⭐️ Model built with dropout : {os.environ.get('DROPOUT')}")
     print(f"⭐️ Model built with pool : {os.environ.get('POOL')}")
     print(f"⭐️ Model built with shape : {img_height} x {img_width}")
     print(f"⭐️ Model built with trainable : {trainable}")
@@ -138,7 +114,8 @@ def compiler(model,learning_rate:float=float(os.environ.get('LEARNING_RATE')),me
     return model
 
 
-def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.get('PATIENCE')), epochs:int=int(os.environ.get('EPOCH')), batch_size:int=int(os.environ.get('BATCH_SIZE'))):
+def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.get('PATIENCE'))\
+            , epochs:int=int(os.environ.get('EPOCH')), batch_size:int=int(os.environ.get('BATCH_SIZE'))):
 
     #Early stopping
     es = EarlyStopping(monitor="val_loss",
@@ -148,15 +125,6 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
 
     print(f"⭐️ EarlyStopping with patience : {patience}")
 
-    #Adding tensorboard to log the training and visiualize performance for each model?
-
-    path_log = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    if not os.path.exists(os.path.join(path_log,"tmp")):
-        os.mkdir(os.path.join(path_log,"tmp"))
-    timestamp = time.strftime('%m-%d %H-%M', time.gmtime(time.time()))
-    logsdir = f"logs_{timestamp}_{os.getenv('MODEL')}"
-    os.mkdir(os.path.join(path_log,"tmp",logsdir))
-    tensorboard_callback = TensorBoard(log_dir=os.path.join(path_log,"tmp",logsdir))
 
     print(f"⭐️ Fitting with epochs : {epochs}")
     print(f"⭐️ Fitting with batch size : {batch_size}")
@@ -169,7 +137,7 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
                 validation_data=validation,
                 shuffle=True,
                 batch_size=batch_size,
-                callbacks=[es, tensorboard_callback])
+                callbacks=[es])
 
     print(f"\u2705 Model fitting is DONE !")
 
