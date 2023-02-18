@@ -5,6 +5,11 @@ from streamlit_elements import media
 import streamlit_elements as elem
 import time
 import requests
+from foodE.registery import model_load
+from foodE.model import pred
+import numpy as np
+from PIL import Image
+import os
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -13,24 +18,37 @@ page = st.sidebar.radio("Go to", ["Page 1", "Page 2", "Page 3"])
 # Use the page variable to determine which page to display
 if page == "Page 1":
     st.title("Camera")
-
     img_file_buffer = st.camera_input("Take a picture")
 
-    if img_file_buffer is not None:
-        # To read image file buffer as a 3D uint8 tensor with TensorFlow:
-        bytes_data = img_file_buffer.getvalue()
-        img_tensor = tf.io.decode_image(bytes_data, channels=3)
+    with st.spinner("Wait for it..."):
+        time.sleep(2.5)
+        if img_file_buffer:
+            # Change image to the correct size
+            img = Image.open(img_file_buffer)
+            img_height = int(os.environ.get('IMG_HEIGHT'))
+            img_width = int(os.environ.get('IMG_WIDTH'))
+        # st.write(img_width)
+            img = img.resize((img_height,img_width))
+            #st.write(type(img))
 
-        # Check the type of img_tensor:
-        # Should output: <class 'tensorflow.python.framework.ops.EagerTensor'>
-        st.write(type(img_tensor))
+            # Transform img to np.array
+            img_array = np.array(img)
+            #st.write(img_array.shape)
 
-        # Check the shape of img_tensor:
-        # Should output shape: (height, width, channels)
-        st.write(img_tensor.shape)
+            # Make a json with a list
+            jayson = {"img": img_array.tolist() }
 
-        response = requests.get(f"http://127.0.0.1:8000/predict?img={img_tensor}").json()
-        st.json(response)
+            # Post request to API
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post("http://localhost:8000/predict", headers = headers, json=jayson)
+
+            if response.status_code == 200:
+                st.balloons()
+                st.write(response.content)
+            else:
+                st.markdown("**Oops**, something went wrong 😓 Please try again.")
+                print(response.status_code, response.content)
+
 
 if page == "Page 2":
     st.title("Tracker")
