@@ -27,18 +27,18 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model = MobileNetV2(include_top = False,
                                  input_shape = (img_height, img_width, 3),
                                  weights = "imagenet",
-                                 pooling = os.environ.get('POOL'))
+                                 pooling = "max")
 
     elif model_choice == "InceptionV3":
         base_model = InceptionV3(include_top=False,
                                  weights="imagenet",
                                  input_shape=(img_height, img_width, 3),
-                                 pooling= os.environ.get('POOL'))
+                                 pooling= "max")
 
     elif model_choice == "ResNet50":
         base_model = ResNet50(include_top = False,
                                  weights = "imagenet",
-                                 pooling = os.environ.get('POOL'),
+                                 pooling = "max",
                                  input_shape = (img_height, img_width, 3))
 
 
@@ -51,7 +51,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model = EfficientNetV2B2(include_top = False,
                                     weights = "imagenet",
                                     include_preprocessing = False,
-                                    pooling=os.environ.get('POOL'),
+                                    pooling="max",
                                     input_shape = (img_height, img_width, 3))
 
     elif model_choice == "Custom":
