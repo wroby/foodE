@@ -15,6 +15,7 @@ from foodE.streamlit_outils import ID_update_weigth_height
 import numpy as np
 from PIL import Image
 import os
+import json
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -112,11 +113,14 @@ if page == "Page 1":
 
             if response.status_code == 200:
                 st.balloons()
-                st.write(response.content)
+                response_list = json.loads(response.content.decode('utf-8'))
+                body_list = [item['body'] for item in response_list]
+                st.write(f"Per 100g your {body_list[0]} meal contains: {body_list[1]} calories, {body_list[2]} carbs,\
+                   {body_list[3]} fat, {body_list[4]} proteins")
+                #st.write(response.content)
             else:
                 st.markdown("**Oops**, something went wrong 😓 Please try again.")
                 print(response.status_code, response.content)
-
 
 if page == "Page 2":
     st.title("Tracker")

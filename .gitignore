@@ -13,4 +13,5 @@ policy.yaml
 tmp/
 foodE/models/
 streamlit/.streamlit/secrets.toml
+google_key.json
 
