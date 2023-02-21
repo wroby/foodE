@@ -79,6 +79,7 @@ async def receive_image(img: Img):
     result = client.insert_rows(table,rows_to_insert)
 
     if result == []:
+
         succes = 'Your data has been processed'
 
     # Return a plain text response containing the prediction & macronutrient results

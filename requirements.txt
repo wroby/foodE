@@ -31,6 +31,7 @@ gcsfs
 google-cloud-storage
 mlflow
 s3fs
+google-cloud-bigquery
 
 # utilities
 six>=1.14
@@ -40,3 +41,4 @@ termcolor
 
 # App
 streamlit
+protobuf==3.19.6
