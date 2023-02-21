@@ -79,9 +79,10 @@ async def receive_image(img: Img):
     result = client.insert_rows(table,rows_to_insert)
 
     if result == []:
-        succes = 'rows inserted succesfully'
 
-    # Return a plain text response containing the prediction
-    return Response(content=predi, media_type="text/plain"), Response(content=carbs,media_type="text/plain"),\
-            Response(content=calories,media_type="text/plain"),Response(content=fat,media_type="text/plain"),\
+        succes = 'Your data has been processed'
+
+    # Return a plain text response containing the prediction & macronutrient results
+    return Response(content=predi, media_type="text/plain"), Response(content=calories,media_type="text/plain"),\
+            Response(content=carbs,media_type="text/plain"),Response(content=fat,media_type="text/plain"),\
                 Response(content=protein,media_type="text/plain"),Response(content=succes, media_type="text/plain")
