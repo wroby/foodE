@@ -12,6 +12,26 @@ notebooks/
 policy.yaml
 tmp/
 foodE/models/
-streamlit/.streamlit/secrets.toml
+front/.streamlit/secrets.toml
 google_key.json
+.streamlit
 
+python -c 'from foodE.registery import save_model; save_model(model=None, params={
+ "learning_rate": "0.00001",
+    "batch_size": "32",
+    "epochs" : "200",
+    "regularizerl1" : "0",
+    "regularizerl2" : "0",
+    "patience" : "10",
+    "trainanble" : "False",
+    "data_augmentation" : "False",
+    "dropout" : "False",
+    "context" : "train"
+}, metrics={
+    "acc" : 0.402,
+    "epoch" : 42,
+    "loss" : 2.42,
+    "test_acc" :  0.415,
+    "val_acc" : 0.421,
+    "val_loss" : 2.361,
+})'
