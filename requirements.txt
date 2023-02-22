@@ -31,7 +31,7 @@ gcsfs
 google-cloud-storage
 mlflow
 s3fs
-google-cloud-bigquery
+'google-cloud-bigquery[pandas]'
 
 # utilities
 six>=1.14

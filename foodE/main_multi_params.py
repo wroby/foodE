@@ -19,9 +19,9 @@ def training():
     # Modify the environment variables and re-run the script for each subsequent model
     #test1 : data augmentation
     #test2 : dropout last layer
-    #test4 : lr-e-5
-    #test5 : lr-e-3
-    #test5 : image size 224
+    #test3 : lr-e-5
+    #test4 : lr-e-3
+    #test : image size 224
     #test6 : l1
     #test7 : l2
     #test8 : l1l2
@@ -34,7 +34,6 @@ def training():
     dropout=["False","True","False","False","False","False","False","False"]
     img_height = [96,96,96,96,224,96,96,96]
     img_width = [96,96,96,96,224,96,96,96]
-
 
 
 
@@ -89,15 +88,16 @@ def training():
         #Params to load to mlflow
         params = dict(
         # Model parameters
-        learning_rate=lr,
+        learning_rate=str(lr),
         batch_size=os.getenv("BATCH_SIZE"),
         epochs = os.getenv("EPOCH"),
-        regularizerl1 = l1,
-        regularizerl2 = l2,
+        regularizerl1 = str(l1),
+        regularizerl2 = str(l2),
+        data_augmentation = str(augmentation),
+        dropout = str(dropout),
+        img = str(img_height),
         patience=os.getenv("PATIENCE "),
         trainanble=os.getenv("TRAINABLE"),
-        data_augmentation = augmentation,
-        dropout = dropout,
         context="train")
 
         save_model(model = model, params = params, metrics = metrics)

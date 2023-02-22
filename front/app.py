@@ -19,8 +19,12 @@ import os
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
+<<<<<<< HEAD:front/app.py
+page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Page 2", "Journal"])
+=======
 page = st.sidebar.radio("Go to", ["Personal information",  "Page 1", "Page 2", "Page 3"])
 submit_button_2 = False
+>>>>>>> master:streamlit/app.py
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
@@ -87,7 +91,7 @@ if page == "Personal information":
 # Age / Gere
 
 
-if page == "Page 1":
+if page == "Camera":
     st.title("Camera")
     img_file_buffer = st.camera_input("Take a picture")
 
@@ -115,7 +119,31 @@ if page == "Page 1":
 
             if response.status_code == 200:
                 st.balloons()
+<<<<<<< HEAD:front/app.py
+                response_list = json.loads(response.content.decode('utf-8'))
+                body_list = [item['body'] for item in response_list]
+
+                # st.write(f"Per 100g your {body_list[0]} meal contains: {body_list[1]} calories, {body_list[2]} carbs,\
+                #    {body_list[3]} fat, {body_list[4]} proteins")
+
+                st.markdown(f"""
+                                ## 🍽️ : {body_list[0]}
+
+                                #### **Per 100g** :
+
+                                🔥 {body_list[1]} calories
+
+                                🥚 {body_list[4]}g proteins
+
+                                🍞 {body_list[2]}g carbs
+
+                                🥑 {body_list[3]}g fat
+
+                            """)
+                #st.write(response.content)
+=======
                 st.write(response.content)
+>>>>>>> master:streamlit/app.py
             else:
                 st.markdown("**Oops**, something went wrong 😓 Please try again.")
                 print(response.status_code, response.content)
@@ -299,17 +327,77 @@ if page == "Page 2":
                                             }
                                         ]
                                     }
-                                ]
+                                ],
                             )
 
 
         mui.Typography("Hello world", key="third_item")
 
-if page == "Page 3":
+if page == "Journal":
 
-    select = st.sidebar.selectbox('Select a State',["France"])
+    # select = st.sidebar.selectbox('Select a State',["France"])
 
-    if select:
+    # if select:
 
-        progress_text = "Proteine"
-        my_bar = st.progress(70, text=progress_text)
+    #     progress_text = "Proteine"
+    #     my_bar = st.progress(70, text=progress_text)
+    from google.cloud import bigquery
+    import datetime
+    import streamlit as st
+
+    userid = 1
+
+    d = st.date_input(
+        "Date",
+        datetime.date(2023, 2, 18))
+    st.write('Date selected:', d)
+
+    client = bigquery.Client()
+
+    # DAILY OBJ
+    st.header("Daily")
+    st.progress(80, text="🔥 Calories")
+    st.progress(70, text="🥚 Protein")
+    st.progress(60, text="🍞 Carbs")
+    st.progress(50, text="🥑 Fat")
+
+    # WEEKLY EVOLUTION
+    st.header("Weekly")
+    cal_sevendays = f"""
+        SELECT Date, SUM(Calories) AS Calories
+        FROM `foode-376420.foodE.macro`
+        WHERE UserID = {userid} AND Date BETWEEN DATE_SUB('{d}', INTERVAL 7 DAY) AND '{d}'
+        GROUP BY Date
+     """
+
+
+    st.write("Objectif calorique sur les 7 derniers jours")
+
+    st.area_chart(data = client.query(cal_sevendays).to_dataframe(), x='Date') # AJOUTER UNE LIGNE OBJ
+
+    nutri_sevendays = f"""
+        SELECT Date, SUM(Protein)*20/100 AS Protein , SUM(Carbs)/100 AS Carbs , SUM(Fat)*20/100 AS Fat
+        FROM `foode-376420.foodE.macro`
+        WHERE UserID = {userid} AND Date BETWEEN DATE_SUB('{d}', INTERVAL 7 DAY) AND '{d}'
+        GROUP BY Date
+     """
+
+    st.write("Objectif nutritionnel sur les 7 derniers jours")
+
+    st.line_chart(data = client.query(nutri_sevendays).to_dataframe(), x='Date') # AJOUTER UNE LIGNE OBJ
+
+    # https://docs.streamlit.io/library/api-reference/charts/st.altair_chart ?
+
+    # DATABASE
+    st.header("Database")
+    query = f"""
+        SELECT *
+        FROM `foode-376420.foodE.macro`
+        WHERE Date = '{d}' AND UserID = {userid}
+     """
+    st.write(query)
+    results = client.query(query)
+    results = results.to_dataframe()
+    st.write(results)
+
+    ## AAGRID TO EDIT? https://streamlit-aggrid.readthedocs.io/en/docs/AgGrid.html

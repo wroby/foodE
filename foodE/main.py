@@ -53,7 +53,10 @@ def training():
     epochs = os.getenv("EPOCH"),
     regularizerl1 = os.getenv("REGULARIZER_L1"),
     regularizerl2 = os.getenv("REGULARIZER_L2"),
-    patience=os.getenv("PATIENCE "),
+    data_augmentation = os.getenv("DATA_AUGMENTATION"),
+    dropout = os.getenv("DROPOUT"),
+    img = os.getenv("IMG_HEIGHT"),
+    patience=os.getenv("PATIENCE"),
     trainanble=os.getenv("TRAINABLE"),
     context="train")
 
@@ -62,16 +65,7 @@ def training():
     save_confusion_matrix(model,test)
     save_classification_report()
 
-
-
     return None
-
-
-
-
-
-
-
 
 
 
