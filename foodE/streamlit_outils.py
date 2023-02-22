@@ -18,10 +18,16 @@ def run_query(query):
     rows = [dict(row) for row in rows_raw]
     return rows
 
-def new_ID(ID, height, weigth):
-    query = f"INSERT INTO `foode-376420.foodE.ID_info` (UserID, Height, Weigth) VALUES ({ID}, {height}, {weigth})"
+# def new_ID(ID, height, weigth, age, genre):
+#     query = f"INSERT INTO `foode-376420.foodE.ID_info` (UserID, Height, Weigth, Age, Genre) VALUES ({ID}, {height}, {weigth}, {age}, {genre})"
+#     rows = run_query(query)
+#     return rows
+def new_ID(ID, height, weigth, age, genre):
+
+    query =   f"INSERT INTO `foode-376420.foodE.ID_info` (UserID, Height, Weigth, Age, Genre) VALUES ({ID}, {height}, {weigth}, {age}, '{genre}')"
     rows = run_query(query)
     return rows
+
 
 def exist_ID(ID):
     query = f"SELECT EXISTS( SELECT * FROM `foodE.ID_info` WHERE UserID={ID} )"
@@ -34,11 +40,16 @@ def ID_update_height(ID, height):
     return rows
 
 def ID_update_weigth(ID, weigth):
-    query = f"UPDATE `foodE.ID_info` SET Weight = {weigth} WHERE UserID={ID}"
+    query = f"UPDATE `foodE.ID_info` SET Weigth = {weigth} WHERE UserID={ID}"
     rows = run_query(query)
     return rows
 
 def ID_update_weigth_height(ID, weigth, height ):
     query = f"UPDATE `foodE.ID_info` SET Weigth = {weigth}, Height = {height} WHERE UserID={ID}"
+    rows = run_query(query)
+    return rows
+
+def ID_read(ID):
+    query = f"SELECT * FROM `foode-376420.foodE.ID_info` WHERE UserID = {ID}"
     rows = run_query(query)
     return rows
