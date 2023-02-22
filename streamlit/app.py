@@ -12,66 +12,67 @@ from foodE.streamlit_outils import exist_ID
 from foodE.streamlit_outils import ID_update_height
 from foodE.streamlit_outils import ID_update_weigth
 from foodE.streamlit_outils import ID_update_weigth_height
+from foodE.streamlit_outils import ID_read
 import numpy as np
 from PIL import Image
 import os
-import json
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Personal information",  "Page 1", "Page 2", "Page 3"])
+submit_button_2 = False
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
     st.title("Personal information")
 
-    with st.form(key='my_data'):
-
+    with st.form(key='my_data_1'):
         t1, _, _ = st.columns(3)
         with t1 :
             user_ID = st.number_input(label='Enter your User ID please : ', value = 1)
 
-
-        c1, c2 = st.columns(2)
-        with c1:
-            height_check = st.checkbox("Change heigth")
-            height = st.slider(label='Enter your height (cm) please : ', min_value=0, max_value=220)
-        with c2:
-            weigth_check = st.checkbox("Change weigth")
-            weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
-
         submit_button = st.form_submit_button(label='Submit')
-
-        if not height_check:
-            height = None
-
-        if not weigth_check:
-            weigth = None
-
-        # tester le fonctionnement de value
-        test = f'Heigth : {height}, weigth = {weigth}, user = {user_ID}'
-        st.write(test)
 
         # Verifier si l'ID Exist
         exist_id = exist_ID(user_ID)[0]['f0_']
-        st.write(f"Le ID {user_ID} est dans la base : {exist_id}")
 
-        test = f'exist = {exist_id}, height = {height}, weigth = {weigth}'
-        st.write(test)
+    if exist_id :
+        id_read = ID_read(user_ID)[0]
+        st.write("Bienvenu.e !")
+        st.write(f"L'ID numéro {user_ID} est bien present dans notre base des données")
+        st.write(f"Votre poids : {id_read['Weigth']}. Votre taille : {id_read['Height']}")
 
-        # si exist modifier soit H soit W
-        if exist_id and height != None and weigth == None:
-            out_ID_update_height = ID_update_height(user_ID,height)
+        with st.form(key='my_data'):
+            c1, c2 = st.columns(2)
+            with c1:
+                weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
+            submit_button = st.form_submit_button(label='Submit')
 
-        if exist_id and height == None and weigth != None:
-            out_ID_update_weigth = ID_update_weigth(user_ID,weigth)
+    else:
+        st.write(f"L'user ID n'existe pas dans notre base. S'il vous plaît creez un nouveau utilisateur en renseignant les informations ci-dessous:")
 
-        if exist_id and height != None and weigth != None:
-            out_ID_update_weigth_height = ID_update_weigth_height(user_ID,weigth,height)
+        with st.form(key='my_data_2'):
 
-        # S'il n'existe pas: Nous avons besoin de l'ensemble de données
-        if not exist_id and height != None and weigth!= None:
-            out_new_id = new_ID(user_ID,height, weigth)
+            c1, c2 = st.columns(2)
+            with c1:
+                genre = st.selectbox("Genre : ", ["M", "F"])
+                height = st.slider(label='Enter your height (cm) please : ', min_value=0, max_value=220)
+            with c2:
+                Age = st.number_input(label='Age : ', value = 15)
+                weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
+
+            submit_button_2 = st.form_submit_button(label='Submit')
+
+    if submit_button_2 :
+        new_ID(user_ID, height, weigth, Age, genre)
+
+
+
+        # tester le fonctionnement de value
+        # test = f'Heigth : {height}, weigth = {weigth}, user = {user_ID}'
+        # st.write(test)
+
+
 
 
 
@@ -83,6 +84,7 @@ if page == "Personal information":
 # cf : https://docs.streamlit.io/knowledge-base/tutorials/databases/bigquery
 # Si problemes de syncro : sudo hwclock -s
 # Attention, dossier .streamlit (le deplacer ?)
+# Age / Gere
 
 
 if page == "Page 1":
@@ -113,14 +115,13 @@ if page == "Page 1":
 
             if response.status_code == 200:
                 st.balloons()
-                response_list = json.loads(response.content.decode('utf-8'))
-                body_list = [item['body'] for item in response_list]
-                st.write(f"Per 100g your {body_list[0]} meal contains: {body_list[1]} calories, {body_list[2]} carbs,\
-                   {body_list[3]} fat, {body_list[4]} proteins")
-                #st.write(response.content)
+                st.write(response.content)
             else:
                 st.markdown("**Oops**, something went wrong 😓 Please try again.")
                 print(response.status_code, response.content)
+
+
+
 
 if page == "Page 2":
     st.title("Tracker")
