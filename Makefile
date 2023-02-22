@@ -16,7 +16,7 @@ multitraining:
 	python -c 'from foodE.main_multi_params import training; training()'
 
 streamlit:
-	streamlit run streamlit/app.py
+	streamlit run front/app.py
 
 install_requirements:
 	@pip install -r requirements.txt
