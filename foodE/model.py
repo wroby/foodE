@@ -65,24 +65,30 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     if trainable == "True":
         base_model.trainable = True
+        for layer in base_model.layers[1].layers:
+            if isinstance(layer, layers.BatchNormalization):
+                layer.trainable = False
     else:
         base_model.trainable = False
 
     regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
     #Model Functionial
     inputs = Input(shape=(img_height,img_width,3))
-    x = layers.Normalization()(inputs)
+
     if os.getenv('DATA_AUGMENTATION') == 'True':
-        x = layers.RandomFlip(mode="horizontal", seed=42)(x)
-        x = layers.RandomFlip(mode="vertical", seed=42)(x)
+        x = layers.RandomFlip(mode="horizontal", seed=42)(inputs)
+            # Apply rotation, height, and width randomizations
         x = layers.RandomRotation(factor=0.2, seed=42)(x)
+        x = layers.RandomHeight(factor=0.2, seed=42)(x)
+        x = layers.RandomRotation(factor=0.2, seed=42)(x)
+            # Apply zoom randomization
         x = layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)(x)
+    else:
+        x = inputs
     x = base_model(x)
-    x = layers.Flatten()(x)
-    x = layers.Dense(256, activation = "relu")(x)
-    x = layers.Dense(128, activation = "relu")(x)
+    x = layers.GlobalAveragePooling2D(name='poolingLayer')(x)
     if os.getenv('DROPOUT') == 'True':
-        x = layers.Dropout(0.5)(x)
+        x = layers.Dropout(0.2)(x)
     outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
 
     model = Model(inputs = inputs, outputs= outputs)
