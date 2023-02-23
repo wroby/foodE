@@ -76,7 +76,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         x = layers.RandomFlip(mode="horizontal", seed=42)(x)
     #   x = layers.RandomFlip(mode="vertical", seed=42)(x)
         x = layers.RandomRotation(factor=0.2, seed=42)(x)
-        x = layers.RandomContrast(factor = 0.1)
+        x = layers.RandomContrast(factor = 0.1)(x)
 
     x = base_model(x)
 
