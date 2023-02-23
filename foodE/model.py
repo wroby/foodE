@@ -65,9 +65,6 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     if trainable == "True":
         base_model.trainable = True
-        for layer in base_model.layers[1].layers:
-            if isinstance(layer, layers.BatchNormalization):
-                layer.trainable = False
     else:
         base_model.trainable = False
 
@@ -92,6 +89,11 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
 
     model = Model(inputs = inputs, outputs= outputs)
+
+    # Block training of BachNormalization
+    for layer in model.layers:
+        if isinstance(layer, layers.BatchNormalization):
+            layer.trainable = False
 
     print(f"⭐️ Model built with Data augmentation : {os.environ.get('DATA_AUGMENTATION')}")
     print(f"⭐️ Model built with dropout : {os.environ.get('DROPOUT')}")
