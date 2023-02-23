@@ -16,15 +16,12 @@ from foodE.streamlit_outils import ID_read
 import numpy as np
 from PIL import Image
 import os
+import json
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
-<<<<<<< HEAD:front/app.py
 page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Page 2", "Journal"])
-=======
-page = st.sidebar.radio("Go to", ["Personal information",  "Page 1", "Page 2", "Page 3"])
-submit_button_2 = False
->>>>>>> master:streamlit/app.py
+submit_button_2 =False
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
@@ -119,7 +116,6 @@ if page == "Camera":
 
             if response.status_code == 200:
                 st.balloons()
-<<<<<<< HEAD:front/app.py
                 response_list = json.loads(response.content.decode('utf-8'))
                 body_list = [item['body'] for item in response_list]
 
@@ -141,9 +137,6 @@ if page == "Camera":
 
                             """)
                 #st.write(response.content)
-=======
-                st.write(response.content)
->>>>>>> master:streamlit/app.py
             else:
                 st.markdown("**Oops**, something went wrong 😓 Please try again.")
                 print(response.status_code, response.content)
