@@ -66,7 +66,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         base_model.trainable = False
 
-     regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+    # regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
 
     #Model Functionial
     inputs = Input(shape=(img_height,img_width,3))
