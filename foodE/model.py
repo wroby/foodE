@@ -5,7 +5,7 @@ from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
 from tensorflow.keras.applications.inception_v3 import InceptionV3
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.applications.vgg16 import VGG16
-from tensorflow.keras.applications.efficientnet_v2 import EfficientNetV2B2
+from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras import regularizers, layers, Sequential, Input, Model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
@@ -47,11 +47,9 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
                            weights = "imagenet",
                            input_shape = (img_height, img_width, 3))
 
-    elif model_choice == "EfficientNetB2":
-        base_model = EfficientNetV2B2(include_top = False,
+    elif model_choice == "EfficientNetB0":
+        base_model = EfficientNetB0(include_top = False,
                                     weights = "imagenet",
-                                    include_preprocessing = False,
-                                    pooling="max",
                                     input_shape = (img_height, img_width, 3))
 
     elif model_choice == "Custom":
@@ -68,22 +66,27 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         base_model.trainable = False
 
-    regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+     regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
+
     #Model Functionial
     inputs = Input(shape=(img_height,img_width,3))
     x = layers.Normalization()(inputs)
+
     if os.getenv('DATA_AUGMENTATION') == 'True':
         x = layers.RandomFlip(mode="horizontal", seed=42)(x)
-        x = layers.RandomFlip(mode="vertical", seed=42)(x)
+    #   x = layers.RandomFlip(mode="vertical", seed=42)(x)
         x = layers.RandomRotation(factor=0.2, seed=42)(x)
-        x = layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)(x)
+        x = layers.RandomConstrast(factor = 0.1)
+
     x = base_model(x)
+
     x = layers.Flatten()(x)
     x = layers.Dense(256, activation = "relu")(x)
     x = layers.Dense(128, activation = "relu")(x)
     if os.getenv('DROPOUT') == 'True':
         x = layers.Dropout(0.5)(x)
-    outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
+
+    outputs = layers.Dense(101,activation = "softmax")(x)
 
     model = Model(inputs = inputs, outputs= outputs)
 
