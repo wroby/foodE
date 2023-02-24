@@ -16,15 +16,37 @@ from foodE.streamlit_outils import ID_read
 import numpy as np
 from PIL import Image
 import os
+from google.cloud import bigquery
+import datetime
+import plotly.express as px
+import pandas as pd
+
+
+#Function
+def calc_objectif(weigth,height,age,genre:str):
+    """Calculate the portion of macronutriment based on height,weight,age and genre \n
+    Return protein,fat,carbs,obj"""
+    if genre == "M":
+        calories = 88.362 + 13.397*weigth + 4.799*height - 5.677*age
+        protein = 1.7*weigth
+        fat = (calories*0.2)/9
+        carbs = ((protein*4)+(fat*9))/4
+        obj = calories *1.2
+    else:
+        calories = 447.593 + 9.247*weigth + 3.098*height - 4.330*age
+        protein = 1.7*weigth
+        fat = (calories*0.2)/9
+        carbs = ((protein*4)+(fat*9))/4
+        obj = calories *1.2
+    return protein,fat,carbs,obj
+
+
+#Instanciate client for bigquery
+client = bigquery.Client()
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
-<<<<<<< HEAD:front/app.py
 page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Page 2", "Journal"])
-=======
-page = st.sidebar.radio("Go to", ["Personal information",  "Page 1", "Page 2", "Page 3"])
-submit_button_2 = False
->>>>>>> master:streamlit/app.py
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
@@ -36,22 +58,61 @@ if page == "Personal information":
             user_ID = st.number_input(label='Enter your User ID please : ', value = 1)
 
         submit_button = st.form_submit_button(label='Submit')
-
+        pifpaf = user_ID
         # Verifier si l'ID Exist
         exist_id = exist_ID(user_ID)[0]['f0_']
 
     if exist_id :
         id_read = ID_read(user_ID)[0]
-        st.write("Bienvenu.e !")
+        st.write("Welcome")
         st.write(f"L'ID numéro {user_ID} est bien present dans notre base des données")
-        st.write(f"Votre poids : {id_read['Weigth']}. Votre taille : {id_read['Height']}")
 
-        with st.form(key='my_data'):
-            c1, c2 = st.columns(2)
-            with c1:
-                weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
-            submit_button = st.form_submit_button(label='Submit')
+        #Get objectives data
+        query = f"SELECT * from foode-376420.foodE.objectif WHERE UserID = {user_ID}"
+        query_job = client.query(query)
+        rows_raw = query_job.result()
+        rows = [dict(row) for row in rows_raw]
 
+        #Display pie chart for macronutriment
+        data = pd.DataFrame({
+            'Macronutrient': ['Protein', 'Carbs', 'Fat'],
+            'Grams': [rows[0]["Protein"],rows[0]["Carbs"], rows[0]["Fat"]]
+})
+        pie = px.pie(data,values='Grams',color=["green","blue","red"])
+        st.plotly_chart(pie)
+
+        #Form to change weight
+        form = st.form(key='my_data')
+        c1,_ = form.columns(2)
+        weigth = c1.slider(label='Change your weigth (kg) : ', min_value=40, max_value=150)
+        submit_button = c1.form_submit_button(label='Submit')
+
+        #Update Bigquery tables with new weight
+        if submit_button:
+            #Update weight in personnal info
+            weight_query = f"UPDATE `foode-376420.foodE.ID_info` SET Weigth = {weigth} WHERE UserID={user_ID}"
+            query_job = client.query(weight_query)
+            rows_raw = query_job.result()
+
+            #Change objective
+            protein,fat,carbs,obj = calc_objectif(weigth,id_read["Height"],id_read["Age"],id_read["Genre"])
+            objectif_query= f"UPDATE foode-376420.foodE.objectif\
+                SET Protein = {round(protein,1)},Carbs = {round(carbs,1)}\
+                    ,Fat = {round(fat,1)},Calories = {round(obj,1)}\
+                WHERE UserID = {user_ID}"
+            query_job = client.query(objectif_query)
+            query_job.result()
+
+            #Reload page, to show pie chart with new value
+            st.experimental_rerun()
+
+
+
+
+
+
+
+    #Logic to write a new ID in database
     else:
         st.write(f"L'user ID n'existe pas dans notre base. S'il vous plaît creez un nouveau utilisateur en renseignant les informations ci-dessous:")
 
@@ -60,15 +121,40 @@ if page == "Personal information":
             c1, c2 = st.columns(2)
             with c1:
                 genre = st.selectbox("Genre : ", ["M", "F"])
-                height = st.slider(label='Enter your height (cm) please : ', min_value=0, max_value=220)
+                height = st.slider(label='Enter your height (cm) please : ', min_value=100, max_value=220)
             with c2:
-                Age = st.number_input(label='Age : ', value = 15)
+                age = st.number_input(label='Age : ', value = 15)
                 weigth = st.slider(label='Enter your weigth (kg) please : ', min_value=40, max_value=150)
 
             submit_button_2 = st.form_submit_button(label='Submit')
 
-    if submit_button_2 :
-        new_ID(user_ID, height, weigth, Age, genre)
+        if submit_button_2 :
+            new_ID(user_ID, height, weigth, age, genre)
+
+            #Calcul d'objectif
+            if genre == "M":
+                calories = 88.362 + 13.397*weigth + 4.799*height - 5.677*age
+                protein = 1.7*weigth
+                fat = (calories*0.2)/9
+                carbs = ((protein*4)+(fat*9))/4
+                obj = calories *1.2
+            else:
+                calories = 447.593 + 9.247*weigth + 3.098*height - 4.330*age
+                protein = 1.7*weigth
+                fat = (calories*0.2)/9
+                carbs = ((protein*4)+(fat*9))/4
+                obj = calories *1.2
+
+            #Pushing queries to BQ
+            obj_update =   f"INSERT INTO `foode-376420.foodE.objectif` (UserID, Protein, Carbs, Fat, Calories)\
+                VALUES ({round(user_ID,1)}, {round(protein,1)}, {round(carbs,1)}, {round(fat,1)}, {round(obj,1)})"
+            query_job = client.query(obj_update)
+            rows_raw = query_job.result()
+
+            #Reload page to show pie chart after creating the new user
+            st.experimental_rerun()
+
+
 
 
 
@@ -119,7 +205,6 @@ if page == "Camera":
 
             if response.status_code == 200:
                 st.balloons()
-<<<<<<< HEAD:front/app.py
                 response_list = json.loads(response.content.decode('utf-8'))
                 body_list = [item['body'] for item in response_list]
 
@@ -141,9 +226,6 @@ if page == "Camera":
 
                             """)
                 #st.write(response.content)
-=======
-                st.write(response.content)
->>>>>>> master:streamlit/app.py
             else:
                 st.markdown("**Oops**, something went wrong 😓 Please try again.")
                 print(response.status_code, response.content)

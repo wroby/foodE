@@ -42,3 +42,4 @@ termcolor
 # App
 streamlit
 protobuf==3.19.6
+plotly==5.13.0
