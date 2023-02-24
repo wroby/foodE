@@ -62,10 +62,12 @@ if page == "Personal information":
         # Verifier si l'ID Exist
         exist_id = exist_ID(user_ID)[0]['f0_']
 
+    #Logic for existing User
     if exist_id :
         id_read = ID_read(user_ID)[0]
-        st.write("Welcome")
-        st.write(f"L'ID numéro {user_ID} est bien present dans notre base des données")
+        st.write("<center>Welcome</center>",unsafe_allow_html=True)
+        st.write(f"<center>L'ID numéro {user_ID} est bien present dans notre base des données</center>"\
+                ,unsafe_allow_html=True)
 
         #Get objectives data
         query = f"SELECT * from foode-376420.foodE.objectif WHERE UserID = {user_ID}"
@@ -78,7 +80,7 @@ if page == "Personal information":
             'Macronutrient': ['Protein', 'Carbs', 'Fat'],
             'Grams': [rows[0]["Protein"],rows[0]["Carbs"], rows[0]["Fat"]]
 })
-        pie = px.pie(data,values='Grams',color=["green","blue","red"])
+        pie = px.pie(data,values='Grams',color_discrete_sequence=["#167d09","#2e76e8","#ad0a0a"])
         st.plotly_chart(pie)
 
         #Form to change weight
@@ -105,11 +107,6 @@ if page == "Personal information":
 
             #Reload page, to show pie chart with new value
             st.experimental_rerun()
-
-
-
-
-
 
 
     #Logic to write a new ID in database
@@ -153,9 +150,6 @@ if page == "Personal information":
 
             #Reload page to show pie chart after creating the new user
             st.experimental_rerun()
-
-
-
 
 
         # tester le fonctionnement de value
