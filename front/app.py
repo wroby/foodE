@@ -45,6 +45,7 @@ def calc_objectif(weigth,height,age,genre:str):
 #Instanciate client for bigquery
 client = bigquery.Client()
 
+
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Page 2", "Journal"])
