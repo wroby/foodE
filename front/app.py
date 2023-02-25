@@ -229,7 +229,7 @@ if page == "Camera":
             #st.write(img_array.shape)
 
             # Make a json with a list
-            user_ID = 2
+            user_ID =  st.session_state.user_ID
             jayson = {"img": img_array.tolist(), "userid" : int(user_ID)}
 
             # Post request to API
@@ -283,7 +283,8 @@ if page == "Upload":
         # Transform img to np.array
         img_array = np.array(img)
         #st.write(img_array.shape)
-
+        
+        user_ID =  st.session_state.user_ID
         # Make a json with a list
         jayson = {"img": img_array.tolist(), "userid" : int(user_ID)}
 
