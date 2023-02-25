@@ -209,7 +209,8 @@ if page == "Camera":
             #st.write(img_array.shape)
 
             # Make a json with a list
-            jayson = {"img": img_array.tolist(), "userid": user_ID }
+            user_ID = 1
+            jayson = {"img": img_array.tolist()}
 
             # Post request to API
             headers = {'Content-Type': 'application/json'}
@@ -262,7 +263,7 @@ if page == "Page 2":
         #st.write(img_array.shape)
 
         # Make a json with a list
-        jayson = {"img": img_array.tolist() }
+        jayson = {"img": img_array.tolist()}
 
         # Post request to API
         headers = {'Content-Type': 'application/json'}

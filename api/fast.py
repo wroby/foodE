@@ -10,6 +10,7 @@ import time
 from google.cloud import bigquery
 import os
 from google.oauth2 import service_account
+import json
 
 # Create a new instance of the FastAPI application
 app = FastAPI()
@@ -19,13 +20,13 @@ app.state.model = model_load()
 
 # Define a data model for the request body
 class Img(BaseModel):
-    img: List
+    img: json
     userid: int
 
 # Define an HTTP endpoint that expects an HTTP POST request
 # with a JSON payload containing a list of images
 @app.post("/predict/")
-async def receive_image(img, userid: Img):
+async def receive_image(img: Img):
 
     # Get user id
     #user_id = userid
@@ -88,6 +89,6 @@ async def receive_image(img, userid: Img):
         succes = 'Your data has been processed'
 
     # Return a plain text response containing the prediction & macronutrient results
-    return userid, Response(content=predi, media_type="text/plain"), Response(content=calories,media_type="text/plain"),\
+    return Response(content=predi, media_type="text/plain"), Response(content=calories,media_type="text/plain"),\
             Response(content=carbs,media_type="text/plain"),Response(content=fat,media_type="text/plain"),\
                 Response(content=protein,media_type="text/plain"),Response(content=succes, media_type="text/plain")
