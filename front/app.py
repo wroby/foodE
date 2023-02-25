@@ -58,7 +58,6 @@ if page == "Personal information":
             user_ID = st.number_input(label='Enter your User ID please : ', value = 1)
 
         submit_button = st.form_submit_button(label='Submit')
-        pifpaf = user_ID
         # Verifier si l'ID Exist
         exist_id = exist_ID(user_ID)[0]['f0_']
 
@@ -75,13 +74,29 @@ if page == "Personal information":
         rows_raw = query_job.result()
         rows = [dict(row) for row in rows_raw]
 
+        #Daily objectives display
+        st.write("<center style = 'font-size:35px;'>Daily Objectives</center>",unsafe_allow_html=True)
+        c1,c2 = st.columns(2)
+
         #Display pie chart for macronutriment
         data = pd.DataFrame({
             'Macronutrient': ['Protein', 'Carbs', 'Fat'],
             'Grams': [rows[0]["Protein"],rows[0]["Carbs"], rows[0]["Fat"]]
 })
-        pie = px.pie(data,values='Grams',color_discrete_sequence=["#167d09","#2e76e8","#ad0a0a"])
-        st.plotly_chart(pie)
+        pie = px.pie(data,values='Grams',color_discrete_sequence=["#167d09","#2e76e8","#ad0a0a"],hole=0.4,\
+            labels=["protein","carbs","fat"],names=["protein","carbs","fat"])
+        c2.plotly_chart(pie,use_container_width=500)
+
+        #Display frame of objectives
+
+        c1.markdown(f"""
+        <div style="position: absolute; top: 150px; left: 5px;">
+        🔥 {rows[0]["Calories"]} calories <br>
+        🥚 {rows[0]["Protein"]}g proteins <br>
+        🍞 {rows[0]["Carbs"]}g carbs <br>
+        🥑 {rows[0]["Fat"]}g fat</div>
+        """, unsafe_allow_html=True)
+        #st.write(respons
 
         #Form to change weight
         form = st.form(key='my_data')
@@ -129,18 +144,19 @@ if page == "Personal information":
             new_ID(user_ID, height, weigth, age, genre)
 
             #Calcul d'objectif
-            if genre == "M":
-                calories = 88.362 + 13.397*weigth + 4.799*height - 5.677*age
-                protein = 1.7*weigth
-                fat = (calories*0.2)/9
-                carbs = ((protein*4)+(fat*9))/4
-                obj = calories *1.2
-            else:
-                calories = 447.593 + 9.247*weigth + 3.098*height - 4.330*age
-                protein = 1.7*weigth
-                fat = (calories*0.2)/9
-                carbs = ((protein*4)+(fat*9))/4
-                obj = calories *1.2
+            protein,fat,carbs,obj = calc_objectif(weigth,height,age,genre)
+            # if genre == "M":
+            #     calories = 88.362 + 13.397*weigth + 4.799*height - 5.677*age
+            #     protein = 1.7*weigth
+            #     fat = (calories*0.2)/9
+            #     carbs = ((protein*4)+(fat*9))/4
+            #     obj = calories *1.2
+            # else:
+            #     calories = 447.593 + 9.247*weigth + 3.098*height - 4.330*age
+            #     protein = 1.7*weigth
+            #     fat = (calories*0.2)/9
+            #     carbs = ((protein*4)+(fat*9))/4
+            #     obj = calories *1.2
 
             #Pushing queries to BQ
             obj_update =   f"INSERT INTO `foode-376420.foodE.objectif` (UserID, Protein, Carbs, Fat, Calories)\
