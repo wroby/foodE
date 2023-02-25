@@ -13,7 +13,11 @@ jupyterlab
 tensorflow-macos==2.9.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
 tensorflow==2.9.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
 tensorflow==2.9.0; sys_platform != 'darwin' # Windows & Ubuntu Intel chips
+<<<<<<< HEAD
 tensorflow-metal==0.5.1; sys_platform == 'darwin'
+=======
+tensorflow-metal==0.5.0
+>>>>>>> 55a65bfe7a3a7b86aeddc22fa09e17fa73fae0bb
 
 # data viz
 matplotlib
@@ -43,3 +47,4 @@ termcolor
 # App
 streamlit
 protobuf==3.19.6
+plotly==5.13.0

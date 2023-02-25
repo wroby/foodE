@@ -85,6 +85,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         x = inputs
     x = base_model(x)
+
     x = layers.Dense(512, activation='relu')(x)
     x = layers.Dense(128, activation='relu')(x)
     #x = layers.GlobalAveragePooling2D()(x)
