@@ -16,9 +16,6 @@ from foodE.streamlit_outils import ID_read
 import numpy as np
 from PIL import Image
 import os
-<<<<<<< HEAD
-import json
-=======
 from google.cloud import bigquery
 import datetime
 import plotly.express as px
@@ -48,7 +45,6 @@ def calc_objectif(weigth,height,age,genre:str):
 #Instanciate client for bigquery
 client = bigquery.Client()
 
->>>>>>> 55a65bfe7a3a7b86aeddc22fa09e17fa73fae0bb
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
@@ -213,7 +209,7 @@ if page == "Camera":
             #st.write(img_array.shape)
 
             # Make a json with a list
-            jayson = {"img": img_array.tolist() }
+            jayson = {"img": img_array.tolist(), "userid": user_ID }
 
             # Post request to API
             headers = {'Content-Type': 'application/json'}
