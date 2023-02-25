@@ -68,11 +68,9 @@ client = bigquery.Client()
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
-<<<<<<< HEAD
+
 page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Upload", "Journal"])
-=======
-page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Upload File", "Journal"])
->>>>>>> 8a3af629d64c113d89551a39568512e7e1cf3ff6
+
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
@@ -236,13 +234,9 @@ if page == "Camera":
 
             # Post request to API
             headers = {'Content-Type': 'application/json'}
-<<<<<<< HEAD
             #url = "https://api-xdmhayaf3a-nw.a.run.app/predict"
             url = "http://localhost:8000/predict"
             response = requests.post(f"{url}", headers = headers, json=jayson)
-=======
-            response = requests.post("https://api-xdmhayaf3a-nw.a.run.app/predict/", headers = headers, json=jayson)
->>>>>>> 8a3af629d64c113d89551a39568512e7e1cf3ff6
 
             if response.status_code == 200:
                 st.balloons()
@@ -274,11 +268,7 @@ if page == "Camera":
 
 
 
-<<<<<<< HEAD
 if page == "Upload":
-=======
-if page == "Upload File":
->>>>>>> 8a3af629d64c113d89551a39568512e7e1cf3ff6
     img_file_buffer = st.file_uploader("Food image to predict your Calories", type=None, accept_multiple_files=False, key=None, help=None, on_change=None,disabled=False, label_visibility="visible")
     if img_file_buffer:
         st.image(img_file_buffer)
