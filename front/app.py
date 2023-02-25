@@ -48,7 +48,7 @@ client = bigquery.Client()
 
 # Create a sidebar with navigation links
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Page 2", "Journal"])
+page = st.sidebar.radio("Go to", ["Personal information",  "Camera", "Upload", "Journal"])
 
 # Use the page variable to determine which page to display
 if page == "Personal information":
@@ -209,12 +209,14 @@ if page == "Camera":
             #st.write(img_array.shape)
 
             # Make a json with a list
-            user_ID = 1
-            jayson = {"img": img_array.tolist()}
+            user_ID = 2
+            jayson = {"img": img_array.tolist(), "userid" : int(user_ID)}
 
             # Post request to API
             headers = {'Content-Type': 'application/json'}
-            response = requests.post("http://localhost:8000/predict", headers = headers, json=jayson)
+            #url = "https://api-xdmhayaf3a-nw.a.run.app/predict"
+            url = "http://localhost:8000/predict"
+            response = requests.post(f"{url}", headers = headers, json=jayson)
 
             if response.status_code == 200:
                 st.balloons()
@@ -246,7 +248,7 @@ if page == "Camera":
 
 
 
-if page == "Page 2":
+if page == "Upload":
     img_file_buffer = st.file_uploader("Food image to predict your Calories", type=None, accept_multiple_files=False, key=None, help=None, on_change=None,disabled=False, label_visibility="visible")
     if img_file_buffer:
         st.image(img_file_buffer)
@@ -263,11 +265,13 @@ if page == "Page 2":
         #st.write(img_array.shape)
 
         # Make a json with a list
-        jayson = {"img": img_array.tolist()}
+        jayson = {"img": img_array.tolist(), "userid" : int(user_ID)}
 
         # Post request to API
         headers = {'Content-Type': 'application/json'}
-        response = requests.post("http://localhost:8000/predict", headers = headers, json=jayson)
+        #url = "https://api-xdmhayaf3a-nw.a.run.app/predict"
+        url = "http://localhost:8000/predict"
+        response = requests.post(f"{url}", headers = headers, json=jayson)
 
         if response.status_code == 200:
             st.balloons()

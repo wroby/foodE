@@ -20,7 +20,7 @@ app.state.model = model_load()
 
 # Define a data model for the request body
 class Img(BaseModel):
-    img: json
+    img: List
     userid: int
 
 # Define an HTTP endpoint that expects an HTTP POST request
@@ -30,6 +30,7 @@ async def receive_image(img: Img):
 
     # Get user id
     #user_id = userid
+    #test = img
 
     # Get the list of images from the request body
     img_list = list(img)[0][1]
@@ -67,7 +68,7 @@ async def receive_image(img: Img):
     table_ref = dataset_ref.table(table)
 
 
-    user_id = 1
+    user_id = list(img)[1][1]
     date = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
     calories = str(nutri['calories']["value"])
     fat = str(nutri['fat']["value"])
