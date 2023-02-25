@@ -11,6 +11,7 @@ from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import mixed_precision
 import os
 from foodE.custom_model import custom_model
 
@@ -68,6 +69,9 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         base_model.trainable = False
 
+    # Mixed Precision to speedup GPU
+    #mixed_precision.set_global_policy('mixed_float16')
+
     regu = regularizers.L1L2(l1=reg_l1, l2=reg_l2)
     #Model Functionial
     inputs = Input(shape=(img_height,img_width,3))
@@ -76,14 +80,14 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         x = layers.RandomFlip(mode="horizontal", seed=42)(inputs)
             # Apply rotation, height, and width randomizations
         x = layers.RandomRotation(factor=0.2, seed=42)(x)
-        x = layers.RandomHeight(factor=0.2, seed=42)(x)
-        x = layers.RandomRotation(factor=0.2, seed=42)(x)
             # Apply zoom randomization
         x = layers.RandomZoom(height_factor=(0.1,0.3),width_factor=(0.1,0.3), seed=42)(x)
     else:
         x = inputs
     x = base_model(x)
-    x = layers.GlobalAveragePooling2D(name='poolingLayer')(x)
+    x = layers.Dense(512, activation='relu')(x)
+    x = layers.Dense(128, activation='relu')(x)
+    #x = layers.GlobalAveragePooling2D()(x)
     if os.getenv('DROPOUT') == 'True':
         x = layers.Dropout(0.2)(x)
     outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
@@ -105,6 +109,10 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
 
     print(f"\u2705 Model {model_choice} initialize")
     print(model.get_config()['layers'][-1])
+
+    ## Check policy for Mixed Precision
+    for lnum, layer in enumerate(model.layers):
+        print(lnum, layer.name, layer.trainable, layer.dtype, layer.dtype_policy)
     return model
 
 
