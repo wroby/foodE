@@ -111,8 +111,8 @@ def model_load():
     LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
     model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{time}")
     print(model_path)
-    model = load_model(os.path.join(model_path,"model"))
-    #model = load_model(model_path)
+    model = load_model(os.path.join(model_path,"efficientnet-78.h5"))
+    #model = load_model(os.path.join(model_path,"model"))
     print("Loaded model from local Disk.")
 
     return model
