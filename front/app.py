@@ -1,12 +1,9 @@
-import tensorflow as tf
 import streamlit as st
 from streamlit_elements import elements, mui, html
 from streamlit_elements import media
 import streamlit_elements as elem
 import time
 import requests
-from foodE.registery import model_load
-from foodE.model import pred
 import numpy as np
 from PIL import Image
 import os
@@ -18,7 +15,7 @@ import json
 
 # Initialization
 if "user_ID" not in st.session_state:
-    st.session_state['user_ID'] = 2
+    st.session_state['user_ID'] = 1
 
 
 #Function
@@ -79,14 +76,12 @@ if page == "Personal information":
     with st.form(key='my_data_1'):
         t1, _, _ = st.columns(3)
         with t1 :
-            st.write(st.session_state.user_ID)
             user_ID = st.number_input(label='Enter your User ID please : ', value = 1)
 
 
         submit_button = st.form_submit_button(label='Submit')
         if submit_button:
             st.session_state.user_ID = user_ID
-            st.write(st.session_state.user_ID)
         # Verifier si l'ID Exist
         exist_id = exist_ID(user_ID)[0]['f0_']
 
@@ -195,20 +190,6 @@ if page == "Personal information":
         # st.write(test)
 
 
-
-
-
-
-# Enregistrer données dans la table ID_heigth_weigth
-# 1 creer fichier secrets.toml
-# 2 ajouter dans .gitignore
-# 3 ajouter secrets dans streamlit
-# cf : https://docs.streamlit.io/knowledge-base/tutorials/databases/bigquery
-# Si problemes de syncro : sudo hwclock -s
-# Attention, dossier .streamlit (le deplacer ?)
-# Age / Gere
-
-
 if page == "Camera":
     st.title("Camera")
     img_file_buffer = st.camera_input("Take a picture")
@@ -218,8 +199,8 @@ if page == "Camera":
         if img_file_buffer:
             # Change image to the correct size
             img = Image.open(img_file_buffer)
-            img_height = int(os.environ.get('IMG_HEIGHT'))
-            img_width = int(os.environ.get('IMG_WIDTH'))
+            img_height = 260
+            img_width = 260
         # st.write(img_width)
             img = img.resize((img_height,img_width))
             #st.write(type(img))
@@ -249,7 +230,7 @@ if page == "Camera":
                 st.markdown(f"""
                                 ## 🍽️ : {body_list[0]}
 
-                                #### **Per 100g** :
+                                #### **Per serving** :
 
                                 🔥 {body_list[1]} calories
 
@@ -266,16 +247,14 @@ if page == "Camera":
                 print(response.status_code, response.content)
 
 
-
-
 if page == "Upload":
     img_file_buffer = st.file_uploader("Food image to predict your Calories", type=None, accept_multiple_files=False, key=None, help=None, on_change=None,disabled=False, label_visibility="visible")
     if img_file_buffer:
         st.image(img_file_buffer)
         # Change image to the correct size
         img = Image.open(img_file_buffer)
-        img_height = int(os.environ.get('IMG_HEIGHT'))
-        img_width = int(os.environ.get('IMG_WIDTH'))
+        img_height = 260
+        img_width = 260
     # st.write(img_width)
         img = img.resize((img_height,img_width))
         #st.write(type(img))
@@ -283,7 +262,7 @@ if page == "Upload":
         # Transform img to np.array
         img_array = np.array(img)
         #st.write(img_array.shape)
-        
+
         user_ID =  st.session_state.user_ID
         # Make a json with a list
         jayson = {"img": img_array.tolist(), "userid" : int(user_ID)}
@@ -305,7 +284,7 @@ if page == "Upload":
             st.markdown(f"""
                             ## 🍽️ : {body_list[0]}
 
-                            #### **Per 100g** :
+                            #### **Per serving** :
 
                             🔥 {body_list[1]} calories
 
@@ -320,6 +299,8 @@ if page == "Upload":
         else:
             st.markdown("**Oops**, something went wrong 😓 Please try again.")
             print(response.status_code, response.content)
+
+
 if page == "Journal":
 
     # select = st.sidebar.selectbox('Select a State',["France"])
@@ -328,23 +309,16 @@ if page == "Journal":
 
     #     progress_text = "Proteine"
     #     my_bar = st.progress(70, text=progress_text)
-    from google.cloud import bigquery
-    import datetime
-    import streamlit as st
-
-
 
     d = st.date_input(
         "Date",
-        datetime.date(2023, 2, 18))
-    st.write('Date selected:', d)
+        datetime.date.today())
 
     client = bigquery.Client()
 
     # DAILY OBJ
     #Objectives request
     user_ID = st.session_state.user_ID
-    st.write(user_ID)
     query = f"SELECT * from foode-376420.foodE.objectif WHERE UserID = {user_ID}"
     query_job = client.query(query)
     rows_raw = query_job.result()
@@ -434,7 +408,6 @@ if page == "Journal":
         FROM `foode-376420.foodE.macro`
         WHERE Date = '{d}' AND UserID = {user_ID}
      """
-    st.write(query)
     results = client.query(query)
     results = results.to_dataframe()
     st.write(results)
