@@ -335,24 +335,24 @@ if page == "Journal":
     query_job = client.query(query)
     rows_raw = query_job.result()
     rows = [dict(row) for row in rows_raw]
-    d_prot = rows[0]["Protein"]
-    if d_prot > 100: d_proty=100
-    d_cal = rows[0]["Calories"]
-    if d_cal > 100: d_caly=100
-    d_carbs = rows[0]["Carbs"]
-    if d_carbs > 100: d_carbsy=100
-    d_fat = (rows[0]["Fat"] /fat)*100
-    if d_fat > 100: d_faty=100
+    d_prot = int(rows[0]["Protein"])
+    if d_prot > 100: d_prot=100
+    d_cal = int(rows[0]["Calories"])
+    if d_cal > 100: d_cal=100
+    d_carbs = int(rows[0]["Carbs"])
+    if d_carbs > 100: d_carbs=100
+    d_fat = int(rows[0]["Fat"])
+    if d_fat > 100: d_fat=100
 
     #Daily graph
     #Progress bar
 
     c1,c2 = st.columns(2)
     c1.header("Daily")
-    c1.progress(d_caly, text="🔥 Calories")
-    c1.progress(d_proty, text="🥚 Protein")
-    c1.progress(d_carbsy, text="🍞 Carbs")
-    c1.progress(d_faty, text="🥑 Fat")
+    c1.progress(d_cal, text="🔥 Calories")
+    c1.progress(d_prot, text="🥚 Protein")
+    c1.progress(d_carbs, text="🍞 Carbs")
+    c1.progress(d_fat, text="🥑 Fat")
 
     st.markdown(
     """
