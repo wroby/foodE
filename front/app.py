@@ -408,7 +408,6 @@ if page == "Journal":
         FROM `foode-376420.foodE.macro`
         WHERE Date = '{d}' AND UserID = {user_ID}
      """
-    st.write(query)
     results = client.query(query)
     results = results.to_dataframe()
     st.write(results)
