@@ -70,10 +70,10 @@ async def receive_image(img: Img):
 
     user_id = list(img)[1][1]
     date = time.strftime('%Y-%m-%d', time.gmtime(time.time()))
-    calories = str(nutri['calories']["value"])
-    fat = str(nutri['fat']["value"])
-    carbs = str(nutri['carbs']["value"])
-    protein = str(nutri['protein']["value"])
+    calories = str(round(nutri['calories']['value']/1.8))
+    fat = str(round(nutri['fat']['value']/1.8))
+    carbs = str(round(nutri['carbs']['value']/1.8))
+    protein = str(round(nutri['protein']['value']/1.8))
     portion = 1
 
     rows_to_insert =[
