@@ -105,11 +105,10 @@ def save_classification_report():
 def model_load():
     #Need to add load model from mlflow
 
-    #load model locally"
-    time = os.getenv("TIMESTAMP_MODEL")
+    # load model locally"
     file_path = os.path.abspath(__file__)
     LOCAL_PATH = os.path.join(os.path.dirname(file_path),"models")
-    model_path = os.path.join(LOCAL_PATH,f"{os.getenv('MODEL')}_{time}")
+    model_path = os.path.join(LOCAL_PATH,"EfficientNetB2-82")
     print(model_path)
     model = load_model(os.path.join(model_path,"efficientnet-82val-noda.h5"))
     #model = load_model(os.path.join(model_path,"model"))
