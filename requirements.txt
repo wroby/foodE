@@ -19,6 +19,5 @@ google-cloud-bigquery[pandas]
 fastapi
 typing
 pydantic
-starlette.responses
-time
-os
+starlette
+uvicorn
