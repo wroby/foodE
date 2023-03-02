@@ -1,7 +1,4 @@
 import streamlit as st
-from streamlit_elements import elements, mui, html
-from streamlit_elements import media
-import streamlit_elements as elem
 import time
 import requests
 import numpy as np
@@ -335,13 +332,13 @@ if page == "Journal":
     query_job = client.query(query)
     rows_raw = query_job.result()
     rows = [dict(row) for row in rows_raw]
-    d_prot = int(rows[0]["Protein"])
+    d_prot = int(rows[0]["Protein"]/protein*100)
     if d_prot > 100: d_prot=100
-    d_cal = int(rows[0]["Calories"])
+    d_cal = int(rows[0]["Calories"]/calories*100)
     if d_cal > 100: d_cal=100
-    d_carbs = int(rows[0]["Carbs"])
+    d_carbs = int(rows[0]["Carbs"]/carbs*100)
     if d_carbs > 100: d_carbs=100
-    d_fat = int(rows[0]["Fat"])
+    d_fat = int(rows[0]["Fat"]/fat*100)
     if d_fat > 100: d_fat=100
 
     #Daily graph
@@ -367,6 +364,14 @@ if page == "Journal":
 )
 
     #Pie chart
+    d_prot = int(rows[0]["Protein"])
+    if d_prot > 100: d_prot=100
+    d_cal = int(rows[0]["Calories"])
+    if d_cal > 100: d_cal=100
+    d_carbs = int(rows[0]["Carbs"])
+    if d_carbs > 100: d_carbs=100
+    d_fat = int(rows[0]["Fat"])
+    if d_fat > 100: d_fat=100
     data = pd.DataFrame({
     'Macronutrient': ['Protein', 'Carbs', 'Fat'],
     'Grams': [d_prot,d_carbs, d_fat]})
@@ -389,14 +394,13 @@ if page == "Journal":
     st.area_chart(data = client.query(cal_sevendays).to_dataframe(), x='Date') # AJOUTER UNE LIGNE OBJ
 
     nutri_sevendays = f"""
-        SELECT Date, SUM(Protein)*20/100 AS Protein , SUM(Carbs)/100 AS Carbs , SUM(Fat)*20/100 AS Fat
+        SELECT Date, SUM(Protein)/{protein}*100 AS Protein , SUM(Carbs)/{carbs}*100 AS Carbs , SUM(Fat)/{fat}*100 AS Fat
         FROM `foode-376420.foodE.macro`
         WHERE UserID = {user_ID} AND Date BETWEEN DATE_SUB('{d}', INTERVAL 7 DAY) AND '{d}'
         GROUP BY Date
      """
 
     st.write("Objectif nutritionnel sur les 7 derniers jours")
-
     st.line_chart(data = client.query(nutri_sevendays).to_dataframe(), x='Date') # AJOUTER UNE LIGNE OBJ
 
     # https://docs.streamlit.io/library/api-reference/charts/st.altair_chart ?
