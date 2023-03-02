@@ -9,7 +9,7 @@ from tensorflow.keras.applications.efficientnet_v2 import EfficientNetV2B2
 from tensorflow.keras import regularizers, layers, Sequential, Input, Model
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten
 from tensorflow.keras.layers import Convolution2D, MaxPooling2D, ZeroPadding2D, GlobalAveragePooling2D, AveragePooling2D
-from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPlateau
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import mixed_precision
 import os
@@ -28,18 +28,18 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model = MobileNetV2(include_top = False,
                                  input_shape = (img_height, img_width, 3),
                                  weights = "imagenet",
-                                 pooling = "max")
+                                 pooling = os.getenv('POOL'))
 
     elif model_choice == "InceptionV3":
         base_model = InceptionV3(include_top=False,
                                  weights="imagenet",
                                  input_shape=(img_height, img_width, 3),
-                                 pooling= "max")
+                                 pooling= os.getenv('POOL'))
 
     elif model_choice == "ResNet50":
         base_model = ResNet50(include_top = False,
                                  weights = "imagenet",
-                                 pooling = "max",
+                                 pooling = os.getenv('POOL'),
                                  input_shape = (img_height, img_width, 3))
 
 
@@ -52,7 +52,7 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
         base_model = EfficientNetV2B2(include_top = False,
                                     weights = "imagenet",
                                     include_preprocessing = False,
-                                    pooling="max",
+                                    pooling=os.getenv('POOL'),
                                     input_shape = (img_height, img_width, 3))
 
     elif model_choice == "Custom":
@@ -85,12 +85,12 @@ def initialize_model(img_height:int=int(os.environ.get('IMG_HEIGHT')),\
     else:
         x = inputs
     x = base_model(x)
-
-    x = layers.Dense(512, activation='relu')(x)
-    x = layers.Dense(128, activation='relu')(x)
-    #x = layers.GlobalAveragePooling2D()(x)
+    if os.getenv('POOL') == 'None':
+        x = layers.GlobalAveragePooling2D()(x)
     if os.getenv('DROPOUT') == 'True':
-        x = layers.Dropout(0.2)(x)
+        x = layers.Dropout(0.3)(x)
+
+
     outputs = layers.Dense(101,activation = "softmax",kernel_regularizer=regu)(x)
 
     model = Model(inputs = inputs, outputs= outputs)
@@ -138,6 +138,13 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
                     mode="auto",
                     restore_best_weights=True)
 
+    # ReduceLROnPlateau Callback
+    lower_lr = ReduceLROnPlateau(factor=0.2,
+                                    monitor='val_accuracy',
+                                    min_lr=1e-7,
+                                    patience=0,
+                                    verbose=1)
+
     print(f"⭐️ EarlyStopping with patience : {patience}")
 
 
@@ -152,7 +159,7 @@ def fitting(model=None,train=None,validation=None,patience:int=int(os.environ.ge
                 validation_data=validation,
                 shuffle=True,
                 batch_size=batch_size,
-                callbacks=[es])
+                callbacks=[es,lower_lr])
 
     print(f"\u2705 Model fitting is DONE !")
 
